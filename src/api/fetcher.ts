@@ -2,6 +2,7 @@ import {
 	getAccessTokenInCookie,
 	redirectToLoginPage,
 	saveAccessTokenInCookie,
+	saveIdTokenInCookie,
 	saveRefreshTokenInCookie,
 } from '../utils/auth-utils';
 import { refreshAccessToken } from './auth';
@@ -35,6 +36,8 @@ export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
 					newResponse.refresh_token,
 					newResponse.refresh_expires_in
 				);
+				saveIdTokenInCookie(newResponse.id_token, newResponse.expires_in);
+
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-expect-error
 				return await fetch(url, { ...init, headers });

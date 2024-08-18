@@ -8,6 +8,7 @@ import type { JwtPayload } from '../types/oauth-types';
 import {
 	redirectToLoginPage,
 	saveAccessTokenInCookie,
+	saveIdTokenInCookie,
 	saveRefreshTokenInCookie,
 } from '../utils/auth-utils';
 
@@ -58,6 +59,7 @@ export function AuthCallback() {
 								data.refresh_token,
 								data.refresh_expires_in
 							);
+							saveIdTokenInCookie(data.id_token, data.expires_in);
 
 							const decodedToken = jwtDecode<JwtPayload>(data.access_token);
 							setUser({

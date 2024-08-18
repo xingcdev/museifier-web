@@ -10,7 +10,9 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { useMutation } from '@tanstack/react-query';
 import * as React from 'react';
+import { logout as logoutFn } from '../api/auth';
 import { UseAuth } from '../hooks/useAuth';
 import { AppLogo } from './app-logo';
 
@@ -18,9 +20,11 @@ const pages = [
 	{ href: '/visits', label: 'My visits' },
 	{ href: '/museums', label: 'Discover museums' },
 ];
-const settings = ['Your profile', 'Log out'];
 
 export function AppHeader() {
+	const { mutate: logout } = useMutation({
+		mutationFn: logoutFn,
+	});
 	const { user } = UseAuth();
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
 		null
@@ -140,12 +144,12 @@ export function AppHeader() {
 							open={Boolean(anchorElUser)}
 							onClose={handleCloseUserMenu}
 						>
-							{user?.username && <MenuItem>{user.username}</MenuItem>}
-							{settings.map((setting) => (
-								<MenuItem key={setting} onClick={handleCloseUserMenu}>
-									<Typography textAlign="center">{setting}</Typography>
-								</MenuItem>
-							))}
+							{user?.username && (
+								<Typography px={2} py={1}>
+									{user.username}
+								</Typography>
+							)}
+							<MenuItem onClick={() => logout()}>Log out</MenuItem>
 						</Menu>
 					</Box>
 				</Stack>

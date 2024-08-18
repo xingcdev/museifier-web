@@ -1,5 +1,12 @@
 import type { OAuthDto } from '../types/oauth-types';
-import { getRefreshTokenInCookie } from '../utils/auth-utils';
+import {
+	getIdTokenInCookie,
+	getRefreshTokenInCookie,
+	redirectToLoginPage,
+	removeAccessTokenInCookie,
+	removeIdTokenInCookie,
+	removeRefreshTokenInCookie,
+} from '../utils/auth-utils';
 
 export async function getAccessToken(code: string): Promise<OAuthDto> {
 	const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
@@ -64,4 +71,27 @@ export async function refreshAccessToken(): Promise<OAuthDto> {
 	}
 
 	return await response.json();
+}
+
+export async function logout() {
+	const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
+	const clientSecret = import.meta.env.VITE_OAUTH_CLIENT_SECRET;
+	const logoutUri = import.meta.env.VITE_OAUTH_LOGOUT_URI;
+	const idToken = getIdTokenInCookie() || '';
+
+	const urlencoded = new URLSearchParams();
+	urlencoded.append('client_id', clientId);
+	urlencoded.append('client_secret', clientSecret);
+	urlencoded.append('id_token_hint', idToken);
+
+	const response = await fetch(logoutUri + '?' + urlencoded.toString());
+
+	if (!response.ok) {
+		return Promise.reject('No id token found.');
+	}
+
+	removeAccessTokenInCookie();
+	removeRefreshTokenInCookie();
+	removeIdTokenInCookie();
+	redirectToLoginPage();
 }

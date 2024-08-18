@@ -34,3 +34,17 @@ export function saveRefreshTokenInCookie(token: string, expiredIn: number) {
 export function removeRefreshTokenInCookie() {
 	Cookies.remove('refresh_token', { secure: true });
 }
+
+// Id token is used for logout
+export function getIdTokenInCookie() {
+	return Cookies.get('id_token');
+}
+
+export function saveIdTokenInCookie(token: string, expiredIn: number) {
+	const expireDate = new Date(new Date().getTime() + 1000 * expiredIn);
+	Cookies.set('id_token', token, { expires: expireDate, secure: true });
+}
+
+export function removeIdTokenInCookie() {
+	Cookies.remove('id_token', { secure: true });
+}

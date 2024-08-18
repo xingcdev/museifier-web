@@ -10,6 +10,7 @@ import {
 	removeAccessTokenInCookie,
 	removeRefreshTokenInCookie,
 	saveAccessTokenInCookie,
+	saveIdTokenInCookie,
 	saveRefreshTokenInCookie,
 } from '../utils/auth-utils';
 
@@ -20,7 +21,7 @@ import {
 // 3.if it is, redirect to the login page
 
 export function RequireAuth({ children }: { children: ReactNode }) {
-	const { setIsAuthenticated, setUser } = UseAuth();
+	const { setIsAuthenticated, isAuthenticated, setUser } = UseAuth();
 	const { mutate: refreshAccessToken } = useRefreshAccessToken();
 
 	// Persistent login
@@ -53,6 +54,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 							newData.refresh_token,
 							newData.refresh_expires_in
 						);
+						saveIdTokenInCookie(newData.id_token, newData.expires_in);
+
 						const newDecodedToken = jwtDecode<JwtPayload>(newData.access_token);
 						setUser({
 							id: newDecodedToken.sub || '',
@@ -74,5 +77,5 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 		}
 	}, [refreshAccessToken, setIsAuthenticated, setUser]);
 
-	return children;
+	return isAuthenticated ? children : null;
 }
