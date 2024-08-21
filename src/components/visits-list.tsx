@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import Pagination from '@mui/material/Pagination';
+import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -31,7 +32,7 @@ export function VisitsList() {
 	};
 
 	if (isPending) {
-		return <div>Loading...</div>;
+		return <SkeletonScreen />;
 	}
 
 	if (isError) {
@@ -114,6 +115,19 @@ export function VisitsList() {
 					</Box>
 				</>
 			)}
+		</>
+	);
+}
+
+function SkeletonScreen() {
+	return (
+		<>
+			<Skeleton height={50} variant="rectangular" sx={{ mb: 4 }} />
+			{Array(4)
+				.fill(0)
+				.map(() => (
+					<Skeleton variant="rectangular" height={140} sx={{ mb: 5 }} />
+				))}
 		</>
 	);
 }
