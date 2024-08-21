@@ -1,3 +1,4 @@
+import { red } from '@mui/material/colors';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import type { LinkProps } from '@mui/material/Link';
@@ -20,7 +21,26 @@ const LinkBehavior = forwardRef<
 	return <RouterLink ref={ref} to={href} {...other} />;
 });
 
+declare module '@mui/material/styles' {
+	interface PaletteColor {
+		bg?: string;
+	}
+
+	interface SimplePaletteColorOptions {
+		bg?: string;
+	}
+}
+
 const theme = createTheme({
+	palette: {
+		error: {
+			main: red[700],
+			light: red[400],
+			dark: red[800],
+			bg: red[100],
+			contrastText: '#fff',
+		},
+	},
 	components: {
 		MuiLink: {
 			defaultProps: {
@@ -41,7 +61,7 @@ export default function Layout() {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<AppHeader />
-				<Container>
+				<Container sx={{ pt: 3 }}>
 					<Outlet />
 				</Container>
 			</ThemeProvider>
