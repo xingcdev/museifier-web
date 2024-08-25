@@ -3,7 +3,13 @@ import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './context/auth-provider';
 import { router } from './router';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+		},
+	},
+});
 
 export default function App() {
 	return (
