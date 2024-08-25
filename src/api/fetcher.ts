@@ -39,9 +39,7 @@ export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
 				);
 				saveIdTokenInCookie(newResponse.id_token, newResponse.expires_in);
 
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
-				return await fetch(url, { ...init, headers });
+				return await fetcher(url, { ...init, headers });
 			} catch {
 				redirectToLoginPage();
 			}
