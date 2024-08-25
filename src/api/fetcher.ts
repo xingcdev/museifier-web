@@ -6,6 +6,7 @@ import {
 	saveRefreshTokenInCookie,
 } from '../utils/auth-utils';
 import { refreshAccessToken } from './auth';
+import { ErrorDto } from './dtos/errorDto';
 
 export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
 	const accessToken = getAccessTokenInCookie() || '';
@@ -47,7 +48,8 @@ export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
 		}
 
 		if (!res.ok) {
-			return Promise.reject(res);
+			const json: ErrorDto = await res.json();
+			return Promise.reject(json);
 		}
 		return await res.json();
 	} catch (err) {

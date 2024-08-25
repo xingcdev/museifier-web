@@ -11,6 +11,8 @@ import {
 } from 'react-router-dom';
 import { AppHeader } from '../components/app-header';
 import { RequireAuth } from '../components/require-auth';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const LinkBehavior = forwardRef<
 	HTMLAnchorElement,
@@ -58,13 +60,15 @@ const theme = createTheme({
 export default function Layout() {
 	return (
 		<RequireAuth>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<AppHeader />
-				<Container sx={{ pt: 3 }}>
-					<Outlet />
-				</Container>
-			</ThemeProvider>
+			<LocalizationProvider dateAdapter={AdapterDayjs}>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<AppHeader />
+					<Container sx={{ pt: 3 }}>
+						<Outlet />
+					</Container>
+				</ThemeProvider>
+			</LocalizationProvider>
 		</RequireAuth>
 	);
 }
