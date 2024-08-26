@@ -91,7 +91,7 @@ export function AddVisitFormDialog({
 					reset();
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
 
-					queryClient.invalidateQueries({ queryKey: ['visits'] });
+					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
 				},
 				onError: (error) => {
 					setError('Something is wrong, please try again.');

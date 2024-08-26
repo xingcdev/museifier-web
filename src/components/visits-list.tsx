@@ -2,24 +2,37 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import SentimentDissatisfiedOutlinedIcon from '@mui/icons-material/SentimentDissatisfiedOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
 import Pagination from '@mui/material/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { getVisits } from '../api/visit/get-visits';
+import { useEffect, useState } from 'react';
+import { getVisitedMuseums } from '../api/museum/get-visited-museums';
 import { AddVisitFormDialog } from './add-visit-form-dialog';
-import { VisitCard } from './visit-card';
+import { MuseumCard } from './museum-card';
+import { MuseumVisits } from './museum-visits';
 
 export function VisitsList() {
 	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(20);
+	const [sort, setSort] = useState('name:asc');
 	const { isPending, isError, error, data } = useQuery({
-		queryKey: ['visits'],
-		queryFn: () => getVisits(page),
+		queryKey: ['visitedMuseums'],
+		queryFn: () => getVisitedMuseums(page, pageSize, sort),
 		placeholderData: keepPreviousData,
 	});
+	const [selectedMuseumId, setSelectedMuseumId] = useState('');
+
+	// Initial museum id
+	useEffect(() => {
+		if (data && !selectedMuseum) {
+			setSelectedMuseumId(data.data[0].id);
+		}
+	}, [data]);
+
+	const selectedMuseum =
+		data?.data.find((museum) => museum.id === selectedMuseumId) || null;
 
 	const [openDialog, setOpenDialog] = useState(false);
 
@@ -41,13 +54,7 @@ export function VisitsList() {
 
 	return (
 		<>
-			<Stack
-				justifyContent="space-between"
-				direction="row"
-				borderBottom={1}
-				borderColor="divider"
-				pb={2}
-			>
+			<Stack justifyContent="space-between" direction="row" pb={2}>
 				<Typography variant="h5" component="h1">
 					My visits
 				</Typography>
@@ -69,29 +76,61 @@ export function VisitsList() {
 			/>
 			{data.data.length > 0 ? (
 				<>
-					<List>
-						{data.data.map((visit) => (
-							<VisitCard
-								key={visit.id}
-								visitId={visit.id}
-								comment={visit.comment}
-								museum={{
-									name: visit.museum.name,
-									address: visit.museum.address,
-									postalCode: visit.museum.postalCode,
-									city: visit.museum.city,
-									url: visit.museum.url,
+					<Box display="flex">
+						<Box>
+							<Stack
+								spacing={2}
+								sx={{
+									flexBasis: 417,
 								}}
-							/>
-						))}
-					</List>
-					<Box display="flex" justifyContent="flex-end" py={1}>
-						<Pagination
-							count={data.pageInfo.totalPages}
-							variant="outlined"
-							shape="rounded"
-							page={page}
-							onChange={(_, value) => setPage(value)}
+							>
+								{data.data.map((museum) => (
+									<Box
+										key={museum.id}
+										onClick={() => setSelectedMuseumId(museum.id)}
+										sx={{
+											cursor: 'pointer',
+										}}
+									>
+										<MuseumCard
+											name={museum.name}
+											address={museum.address}
+											postalCode={museum.postalCode}
+											city={museum.city}
+											url={museum.url}
+											sx={{
+												borderColor:
+													selectedMuseumId === museum.id
+														? 'primary.main'
+														: undefined,
+											}}
+										/>
+									</Box>
+								))}
+							</Stack>
+							<Box display="flex" justifyContent="flex-end" py={1}>
+								<Pagination
+									count={data.pageInfo.totalPages}
+									variant="outlined"
+									shape="rounded"
+									page={page}
+									onChange={(_, value) => setPage(value)}
+								/>
+							</Box>
+						</Box>
+
+						<MuseumVisits
+							visits={selectedMuseum?.visits || []}
+							sx={{
+								flexBasis: 0,
+								flexGrow: 1,
+								ml: 3,
+								p: 2,
+								position: 'sticky',
+								height: '93vh',
+								overflow: 'scroll',
+								top: 12,
+							}}
 						/>
 					</Box>
 				</>
@@ -123,11 +162,14 @@ function SkeletonScreen() {
 	return (
 		<>
 			<Skeleton height={50} variant="rectangular" sx={{ mb: 4 }} />
-			{Array(4)
-				.fill(0)
-				.map(() => (
-					<Skeleton variant="rectangular" height={140} sx={{ mb: 5 }} />
-				))}
+			{[1, 2, 3, 4].map((value) => (
+				<Skeleton
+					key={value}
+					variant="rectangular"
+					height={140}
+					sx={{ mb: 5 }}
+				/>
+			))}
 		</>
 	);
 }
