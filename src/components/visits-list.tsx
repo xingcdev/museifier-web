@@ -1,9 +1,9 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import SentimentDissatisfiedOutlinedIcon from '@mui/icons-material/SentimentDissatisfiedOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
@@ -12,7 +12,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
 	getVisitedMuseums,
@@ -21,10 +21,15 @@ import {
 import { AddVisitFormDialog } from './add-visit-form-dialog';
 import { MuseumCard } from './museum-card';
 import { MuseumVisits } from './museum-visits';
+import { FilterButton } from './ui/filter-button';
 import { Search } from './ui/search';
+import { VisitFilter } from './visit-filter';
 
 export function VisitsList() {
 	const [selectedMuseumId, setSelectedMuseumId] = useState('');
+
+	const [openFilter, setOpenFilter] = useState(false);
+	const [numberOfFilters, setNumberOfFilters] = useState(0);
 
 	const [searchParams, setSearchParams] = useSearchParams();
 	const pageParam = searchParams.get('page');
@@ -32,6 +37,10 @@ export function VisitsList() {
 	const sizeParam = searchParams.get('size');
 	const size = sizeParam ? parseInt(sizeParam) : 20;
 	const searchQueryParam = searchParams.get('q');
+	const cityParam = searchParams.get('city');
+	const postalCodeParam = searchParams.get('postalCode');
+	const departmentParam = searchParams.get('department');
+	const isFiltering = !!cityParam || !!postalCodeParam || !!departmentParam;
 
 	// e.g. ['name', 'asc']
 	const sortParams = searchParams.get('sort')?.split(':') || [];
@@ -43,9 +52,9 @@ export function VisitsList() {
 		size,
 		q: searchQueryParam || undefined,
 		sort: sortField && sortOrder ? sortField + ':' + sortOrder : undefined,
-		city: searchParams.get('city') || undefined,
-		postalCode: searchParams.get('postalCode') || undefined,
-		department: searchParams.get('department') || undefined,
+		city: cityParam || undefined,
+		postalCode: postalCodeParam || undefined,
+		department: departmentParam || undefined,
 	};
 
 	const { isPending, isError, error, data } = useQuery({
@@ -91,6 +100,52 @@ export function VisitsList() {
 		}
 	}
 
+	// ====== Filtering ======
+
+	function handleFilter(e: ChangeEvent<HTMLInputElement>) {
+		const inputName = e.target.name;
+
+		if (inputName === 'city') {
+			if (e.target.value) {
+				searchParams.set('city', e.target.value);
+			} else {
+				searchParams.delete('city');
+			}
+		} else if (inputName === 'postalCode') {
+			if (e.target.value) {
+				searchParams.set('postalCode', e.target.value);
+			} else {
+				searchParams.delete('postalCode');
+			}
+		} else if (inputName === 'department') {
+			if (e.target.value) {
+				searchParams.set('department', e.target.value);
+			} else {
+				searchParams.delete('department');
+			}
+		}
+		setSearchParams(searchParams);
+	}
+
+	useEffect(() => {
+		function computeFilterQuantity() {
+			let number = 0;
+			if (cityParam) {
+				number += 1;
+			}
+			if (postalCodeParam) {
+				number += 1;
+			}
+			if (departmentParam) {
+				number += 1;
+			}
+			return number;
+		}
+		setNumberOfFilters(computeFilterQuantity());
+	}, [cityParam, departmentParam, postalCodeParam]);
+
+	// =======================
+
 	const selectedMuseum =
 		data?.data.find((museum) => museum.id === selectedMuseumId) || null;
 
@@ -132,12 +187,12 @@ export function VisitsList() {
 				justifyContent="space-between"
 				alignItems="center"
 				direction="row"
-				pb={2}
+				pb={3}
 			>
 				<Typography variant="h5" component="h1">
 					My visits
 				</Typography>
-				{(data.data.length > 0 || searchQueryParam) && (
+				{(data.data.length > 0 || searchQueryParam || isFiltering) && (
 					<Stack direction="row" spacing={2}>
 						<form onSubmit={handleSearch}>
 							<Search
@@ -145,7 +200,7 @@ export function VisitsList() {
 								defaultValue={searchParams.get('q')?.toString()}
 							/>
 						</form>
-						<Stack direction="row" spacing={0.5}>
+						<Stack direction="row">
 							<Select
 								defaultValue={sortField || 'name'}
 								onChange={handleSortField}
@@ -170,6 +225,10 @@ export function VisitsList() {
 								)}
 							</IconButton>
 						</Stack>
+						<FilterButton
+							onClick={() => setOpenFilter((prev) => !prev)}
+							numberOfFilters={numberOfFilters}
+						/>
 
 						<Button
 							variant="contained"
@@ -182,11 +241,15 @@ export function VisitsList() {
 					</Stack>
 				)}
 			</Stack>
+			<Collapse in={openFilter}>
+				<VisitFilter handleChange={handleFilter} />
+			</Collapse>
 			<AddVisitFormDialog
 				open={openDialog}
 				onClose={handleClose}
 				onCancel={handleClose}
 			/>
+
 			{data.data.length > 0 ? (
 				<Box display="flex">
 					<Box>
@@ -245,17 +308,26 @@ export function VisitsList() {
 						}}
 					/>
 				</Box>
-			) : searchQueryParam ? (
+			) : searchQueryParam || isFiltering ? (
 				<NoSearchResultsFound />
 			) : (
 				<Box display="flex" justifyContent="center" alignItems="center" py={10}>
 					<Box textAlign="center">
-						<SentimentDissatisfiedOutlinedIcon sx={{ fontSize: 100 }} />
-						<Typography variant="subtitle1" mb={3}>
+						<img
+							src="/no-results-found.png"
+							alt="No results found"
+							width={400}
+						/>
+						<Typography variant="h6" mb={2} fontWeight={500}>
 							It seems that you don't have any visits.
 						</Typography>
-						<Button variant="contained" onClick={handleClickOpen}>
-							Add a visit
+						<Button
+							variant="contained"
+							size="small"
+							onClick={handleClickOpen}
+							startIcon={<AddCircleOutlineOutlinedIcon />}
+						>
+							Create
 						</Button>
 					</Box>
 				</Box>
@@ -268,7 +340,8 @@ function NoSearchResultsFound() {
 	return (
 		<Box display="flex" justifyContent="center" alignItems="center" py={10}>
 			<Box textAlign="center">
-				<Typography variant="subtitle1" mb={3}>
+				<img src="/no-results-found.png" alt="No results found" width={400} />
+				<Typography variant="subtitle1" fontWeight={500}>
 					No results are found, please try different keywords.
 				</Typography>
 			</Box>

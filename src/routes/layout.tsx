@@ -64,7 +64,7 @@ export default function Layout() {
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<AppHeader />
-					<Container sx={{ pt: 3 }}>
+					<Container sx={{ pt: 4 }}>
 						<Outlet />
 					</Container>
 				</ThemeProvider>
