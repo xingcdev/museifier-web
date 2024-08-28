@@ -24,6 +24,8 @@ import { MuseumVisits } from './museum-visits';
 import { Search } from './ui/search';
 
 export function VisitsList() {
+	const [selectedMuseumId, setSelectedMuseumId] = useState('');
+
 	const [searchParams, setSearchParams] = useSearchParams();
 	const pageParam = searchParams.get('page');
 	const page = pageParam ? parseInt(pageParam) : 1;
@@ -31,11 +33,28 @@ export function VisitsList() {
 	const size = sizeParam ? parseInt(sizeParam) : 20;
 	const searchQueryParam = searchParams.get('q');
 
-	// ====== Sorting ======
 	// e.g. ['name', 'asc']
 	const sortParams = searchParams.get('sort')?.split(':') || [];
 	const sortField = sortParams[0] ? sortParams[0] : 'name';
 	const sortOrder = sortParams[1] ? sortParams[1] : 'asc';
+
+	const getVisitedMuseumsParams: GetVisitedMuseumsParams = {
+		page,
+		size,
+		q: searchQueryParam || undefined,
+		sort: sortField && sortOrder ? sortField + ':' + sortOrder : undefined,
+		city: searchParams.get('city') || undefined,
+		postalCode: searchParams.get('postalCode') || undefined,
+		department: searchParams.get('department') || undefined,
+	};
+
+	const { isPending, isError, error, data } = useQuery({
+		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
+		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
+		placeholderData: keepPreviousData,
+	});
+
+	// ====== Sorting ======
 	function handleSortField(e: SelectChangeEvent) {
 		if (e.target.value) {
 			const newValue = `${e.target.value}:${sortOrder}`;
@@ -72,32 +91,22 @@ export function VisitsList() {
 		}
 	}
 
-	const getVisitedMuseumsParams: GetVisitedMuseumsParams = {
-		page,
-		size,
-		q: searchQueryParam || undefined,
-		sort: sortField && sortOrder ? sortField + ':' + sortOrder : undefined,
-		city: searchParams.get('city') || undefined,
-		postalCode: searchParams.get('postalCode') || undefined,
-		department: searchParams.get('department') || undefined,
-	};
-
-	const { isPending, isError, error, data } = useQuery({
-		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
-		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
-		placeholderData: keepPreviousData,
-	});
-	const [selectedMuseumId, setSelectedMuseumId] = useState('');
+	const selectedMuseum =
+		data?.data.find((museum) => museum.id === selectedMuseumId) || null;
 
 	// Initial museum id
 	useEffect(() => {
 		if (data && data.data.length > 0 && !selectedMuseum) {
 			setSelectedMuseumId(data.data[0].id);
 		}
-	}, [data]);
+	}, [data, selectedMuseum]);
 
-	const selectedMuseum =
-		data?.data.find((museum) => museum.id === selectedMuseumId) || null;
+	// If we change the pagination, sorting, filtering, select the first museum in the list.
+	useEffect(() => {
+		if (data && data.data.length > 0 && selectedMuseum) {
+			setSelectedMuseumId(data.data[0].id);
+		}
+	}, [data, searchParams]);
 
 	const [openDialog, setOpenDialog] = useState(false);
 
