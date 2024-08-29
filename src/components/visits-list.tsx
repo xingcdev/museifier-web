@@ -302,7 +302,8 @@ export function VisitsList() {
 										url={museum.url}
 										sx={{
 											width: 390,
-											borderColor:
+											outline: selectedMuseumId === museum.id ? 1.5 : undefined,
+											outlineColor:
 												selectedMuseumId === museum.id
 													? 'primary.main'
 													: undefined,
