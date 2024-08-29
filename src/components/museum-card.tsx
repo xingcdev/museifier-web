@@ -34,7 +34,9 @@ export function MuseumCard({
 				<Typography>
 					{postalCode} {city}
 				</Typography>
-				<Link href={url}>{url}</Link>
+				<Link color="text.secondary" href={url}>
+					{url}
+				</Link>
 			</Box>
 		</Card>
 	);
