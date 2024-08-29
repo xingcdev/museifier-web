@@ -35,7 +35,7 @@ export function VisitsList() {
 	const pageParam = searchParams.get('page');
 	const page = pageParam ? parseInt(pageParam) : 1;
 	const sizeParam = searchParams.get('size');
-	const size = sizeParam ? parseInt(sizeParam) : 20;
+	const size = sizeParam ? parseInt(sizeParam) : 15;
 	const searchQueryParam = searchParams.get('q');
 	const cityParam = searchParams.get('city');
 	const postalCodeParam = searchParams.get('postalCode');
@@ -62,6 +62,19 @@ export function VisitsList() {
 		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
 		placeholderData: keepPreviousData,
 	});
+
+	// ====== Pagination ======
+
+	function handlePagination(page: number) {
+		if (page > 1) {
+			searchParams.set('page', page.toString());
+		} else {
+			searchParams.delete('page');
+		}
+		setSearchParams(searchParams);
+	}
+
+	// ========================
 
 	// ====== Sorting ======
 	function handleSortField(e: SelectChangeEvent) {
@@ -190,7 +203,7 @@ export function VisitsList() {
 				pb={3}
 			>
 				<Typography variant="h5" component="h1">
-					My visits
+					My visited museums
 				</Typography>
 				{(data.data.length > 0 || searchQueryParam || isFiltering) && (
 					<Stack direction="row" spacing={2}>
@@ -200,31 +213,7 @@ export function VisitsList() {
 								defaultValue={searchParams.get('q')?.toString()}
 							/>
 						</form>
-						<Stack direction="row">
-							<Select
-								defaultValue={sortField || 'name'}
-								onChange={handleSortField}
-								size="small"
-								sx={{
-									width: 90,
-									borderRadius: 10,
-								}}
-							>
-								<MenuItem value="name">Name</MenuItem>
-								<MenuItem value="city">City</MenuItem>
-							</Select>
-							<IconButton
-								aria-label="sort"
-								size="small"
-								onClick={handleSortOrder}
-							>
-								{sortOrder === 'desc' ? (
-									<ArrowDownwardIcon />
-								) : (
-									<ArrowUpwardIcon />
-								)}
-							</IconButton>
-						</Stack>
+
 						<FilterButton
 							onClick={() => setOpenFilter((prev) => !prev)}
 							numberOfFilters={numberOfFilters}
@@ -254,6 +243,44 @@ export function VisitsList() {
 				<Box display="flex">
 					<Box>
 						<Stack
+							direction="row"
+							justifyContent="space-between"
+							alignItems="center"
+							pb={2}
+						>
+							<Stack direction="row" alignItems="center">
+								<Typography mr={1}>Sort by:</Typography>
+								<Select
+									value={sortField || 'name'}
+									onChange={handleSortField}
+									size="small"
+									sx={{
+										width: 90,
+										borderRadius: 10,
+										height: 32,
+										textAlign: 'center',
+									}}
+								>
+									<MenuItem value="name">Name</MenuItem>
+									<MenuItem value="city">City</MenuItem>
+								</Select>
+								<IconButton
+									aria-label="sort"
+									size="small"
+									onClick={handleSortOrder}
+								>
+									{sortOrder === 'desc' ? (
+										<ArrowDownwardIcon />
+									) : (
+										<ArrowUpwardIcon />
+									)}
+								</IconButton>
+							</Stack>
+							<Typography color="text.secondary">
+								{data.pageInfo.totalResults} results
+							</Typography>
+						</Stack>
+						<Stack
 							spacing={2}
 							sx={{
 								flexBasis: 417,
@@ -274,6 +301,7 @@ export function VisitsList() {
 										city={museum.city}
 										url={museum.url}
 										sx={{
+											width: 390,
 											borderColor:
 												selectedMuseumId === museum.id
 													? 'primary.main'
@@ -283,13 +311,13 @@ export function VisitsList() {
 								</Box>
 							))}
 						</Stack>
-						<Box display="flex" justifyContent="flex-end" py={1}>
+						<Box display="flex" justifyContent="center" py={2}>
 							<Pagination
 								count={data.pageInfo.totalPages}
 								variant="outlined"
 								shape="rounded"
 								page={page}
-								// onChange={(_, value) => setPage(value)}
+								onChange={(_, newPage) => handlePagination(newPage)}
 							/>
 						</Box>
 					</Box>

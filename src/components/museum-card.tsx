@@ -23,7 +23,7 @@ export function MuseumCard({
 		<Card
 			{...props}
 			variant="outlined"
-			sx={{ display: 'flex', p: 4, ...props.sx }}
+			sx={{ display: 'flex', p: 3, ...props.sx }}
 		>
 			<img src="/vite.svg" alt="museum" loading="lazy" />
 			<Box ml={2}>
