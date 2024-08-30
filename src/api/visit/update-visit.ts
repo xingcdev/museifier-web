@@ -1,9 +1,18 @@
 import { VisitDto } from '../dtos/visitDto';
 import { fetcher } from '../fetcher';
 
-export function updateVisit(id: string, comment: string) {
-	return fetcher<VisitDto>(`/visits/${id}`, {
-		method: 'PATCH',
-		body: JSON.stringify({ comment }),
+interface UpdateVisitVariables {
+	id: string;
+	title: string;
+	comment: string;
+}
+
+export function updateVisit(variables: UpdateVisitVariables) {
+	return fetcher<VisitDto>(`/visits/${variables.id}`, {
+		method: 'PUT',
+		body: JSON.stringify({
+			title: variables.title,
+			comment: variables.comment,
+		}),
 	});
 }

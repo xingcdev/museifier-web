@@ -1,58 +1,42 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Typography } from '@mui/material';
-import type { ButtonProps } from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import IconButton, { type IconButtonProps } from '@mui/material/IconButton';
 import { useState } from 'react';
-import { deleteVisit } from '../api/visit/delete-visit';
-import { DeleteConfirmDialog } from './ui/delete-confirm-dialog';
+import { UpdateVisitDialog } from './update-visit-dialog';
 
-export interface EditVisitButtonProps extends ButtonProps {
+export interface UpdateVisitButtonProps extends IconButtonProps {
 	id: string;
-	visitName: string;
+	initialValues?: {
+		title: string;
+		comment: string;
+	};
 }
 
-export function UpdateVisitFormDialog({
+export function UpdateVisitButton({
 	id,
-	visitName,
+	initialValues,
 	...props
-}: EditVisitButtonProps) {
-	const queryClient = useQueryClient();
-	const { mutate } = useMutation({
-		mutationFn: ({ id }: { id: string }) => deleteVisit(id),
-	});
+}: UpdateVisitButtonProps) {
 	const [openDialog, setOpenDialog] = useState(false);
-
-	function handleClick() {
-		mutate(
-			{ id },
-			{
-				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['visits'] });
-				},
-			}
-		);
-	}
 
 	return (
 		<>
 			<IconButton
 				{...props}
-				aria-label="delete"
+				size="small"
+				color="primary"
 				onClick={() => setOpenDialog(true)}
 			>
-				<DeleteIcon />
+				<EditOutlinedIcon fontSize="small" />
 			</IconButton>
-			<DeleteConfirmDialog
-				title="Are you sure?"
-				open={openDialog}
-				onClose={() => setOpenDialog(false)}
-				onDelete={handleClick}
-			>
-				<Typography>
-					Are you sure to delete your visit of <b>{visitName}</b>
-				</Typography>
-			</DeleteConfirmDialog>
+			{/* we don't use 'open' to control the dialog because we want to update 'initialValues' */}
+			{openDialog && (
+				<UpdateVisitDialog
+					visitId={id}
+					initialValues={initialValues}
+					open={openDialog}
+					onClose={() => setOpenDialog(false)}
+				/>
+			)}
 		</>
 	);
 }

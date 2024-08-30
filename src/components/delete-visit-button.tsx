@@ -28,7 +28,7 @@ export function DeleteVisitButton({
 			{ id },
 			{
 				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['visits'] });
+					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
 				},
 			}
 		);
@@ -41,7 +41,7 @@ export function DeleteVisitButton({
 				aria-label="delete"
 				onClick={() => setOpenDialog(true)}
 			>
-				<DeleteIcon />
+				<DeleteIcon fontSize={props.size} />
 			</IconButton>
 			<DeleteConfirmDialog
 				title="Are you sure?"
@@ -50,7 +50,7 @@ export function DeleteVisitButton({
 				onDelete={handleClick}
 			>
 				<Typography>
-					Are you sure to delete your visit of <b>{visitName}</b>
+					Are you sure to delete your visit <b>{visitName}</b>
 				</Typography>
 			</DeleteConfirmDialog>
 		</>

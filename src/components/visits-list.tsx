@@ -12,7 +12,12 @@ import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { useEffect, useState, type ChangeEvent } from 'react';
+import {
+	useEffect,
+	useState,
+	type ChangeEvent,
+	type FormEventHandler,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
 	getVisitedMuseums,
@@ -58,7 +63,7 @@ export function VisitsList() {
 	};
 
 	const { isPending, isError, error, data } = useQuery({
-		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
+		queryKey: ['visitedMuseums'],
 		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
 		placeholderData: keepPreviousData,
 	});
@@ -99,9 +104,9 @@ export function VisitsList() {
 	}
 	// ====================
 
-	function handleSearch(e: any) {
+	const handleSearch: FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault();
-		const form = e.target;
+		const form = e.target as HTMLFormElement;
 		const formData = new FormData(form);
 		const query = formData.get('query')?.toString();
 		if (query) {
@@ -111,7 +116,7 @@ export function VisitsList() {
 			searchParams.delete('q');
 			setSearchParams(searchParams);
 		}
-	}
+	};
 
 	// ====== Filtering ======
 
@@ -174,7 +179,7 @@ export function VisitsList() {
 		if (data && data.data.length > 0 && selectedMuseum) {
 			setSelectedMuseumId(data.data[0].id);
 		}
-	}, [data, searchParams]);
+	}, [data, searchParams, selectedMuseum]);
 
 	const [openDialog, setOpenDialog] = useState(false);
 
@@ -277,7 +282,10 @@ export function VisitsList() {
 								</IconButton>
 							</Stack>
 							<Typography color="text.secondary">
-								{data.pageInfo.totalResults} results
+								<Typography component="span" fontWeight={500}>
+									{data.pageInfo.totalResults}
+								</Typography>{' '}
+								{data.pageInfo.totalResults > 1 ? 'results' : 'result'}
 							</Typography>
 						</Stack>
 						<Stack

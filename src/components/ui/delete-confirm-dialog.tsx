@@ -34,7 +34,7 @@ export function DeleteConfirmDialog(props: ConfirmationDialogProps) {
 			<DialogTitle>{title}</DialogTitle>
 			<DialogContent>{children}</DialogContent>
 			<DialogActions>
-				<Button onClick={handleCancel} variant="text" color="info">
+				<Button onClick={handleCancel} variant="text">
 					Cancel
 				</Button>
 				<LoadingButton
