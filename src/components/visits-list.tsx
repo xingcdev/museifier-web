@@ -61,7 +61,7 @@ export function VisitsList() {
 	};
 
 	const { isPending, isError, error, data } = useQuery({
-		queryKey: ['visitedMuseums'],
+		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
 		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
 		placeholderData: keepPreviousData,
 	});
