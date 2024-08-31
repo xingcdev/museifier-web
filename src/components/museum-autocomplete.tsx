@@ -4,8 +4,9 @@ import Autocomplete, {
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import { useQuery } from '@tanstack/react-query';
-import { forwardRef } from 'react';
-import { getMuseums } from '../api/museum/get-museums';
+import { useDebounce } from '@uidotdev/usehooks';
+import { forwardRef, useEffect, useState, type SyntheticEvent } from 'react';
+import { getMuseums, type GetMuseumsParams } from '../api/museum/get-museums';
 
 export interface MuseumAutocompleteProps
 	extends Omit<
@@ -29,10 +30,35 @@ export const MuseumAutocomplete = forwardRef(
 		{ error, helperText, ...props }: MuseumAutocompleteProps,
 		ref: React.Ref<HTMLDivElement>
 	) => {
-		const { data, isPending } = useQuery({
-			queryFn: () => getMuseums(),
-			queryKey: ['museums'],
+		const [searchTerm, setSearchTerm] = useState('');
+		const [inputValue, setInputValue] = useState('');
+		const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+		const getMuseumsParams: GetMuseumsParams = {
+			page: 1,
+			size: 10,
+			q: debouncedSearchTerm,
+		};
+
+		const [fetchQuery, setFetchQuery] = useState(true);
+
+		const { data, isFetching } = useQuery({
+			queryFn: () => getMuseums(getMuseumsParams),
+			queryKey: ['museums', getMuseumsParams],
+			enabled: fetchQuery,
 		});
+
+		function handleInputChange(
+			_: SyntheticEvent<Element, Event>,
+			newValue: string
+		) {
+			setSearchTerm(newValue);
+			setInputValue(newValue);
+		}
+
+		// Don't fetch the list of museum when we select an option
+		useEffect(() => {
+			setFetchQuery(!(props.value?.label === inputValue));
+		}, [props.value?.label, inputValue]);
 
 		const options =
 			data?.data.map((museum) => ({
@@ -45,17 +71,16 @@ export const MuseumAutocomplete = forwardRef(
 				{...props}
 				ref={ref}
 				id="museum-autocomplete"
-				// open={open}
-				// onOpen={() => {
-				// 	setOpen(true);
-				// }}
-				// onClose={() => {
-				// 	setOpen(false);
-				// }}
+				onOpen={() => {
+					setSearchTerm('');
+				}}
+				inputValue={inputValue}
+				onInputChange={handleInputChange}
 				options={options}
-				loading={isPending}
+				loading={isFetching}
 				isOptionEqualToValue={(option, value) => option.label === value.label}
-				// getOptionLabel={(option) => option.label}
+				// Disable the built-in filtering
+				filterOptions={(x) => x}
 				renderInput={(params) => (
 					<TextField
 						{...params}
@@ -66,7 +91,7 @@ export const MuseumAutocomplete = forwardRef(
 							...params.InputProps,
 							endAdornment: (
 								<>
-									{isPending ? (
+									{isFetching ? (
 										<CircularProgress color="inherit" size={20} />
 									) : null}
 									{params.InputProps.endAdornment}

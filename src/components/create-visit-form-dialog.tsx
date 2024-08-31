@@ -16,7 +16,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
 import { VisitErrorCode } from '../api/visit-error-code';
-import { addVisit } from '../api/visit/add-visit';
+import { createVisit } from '../api/visit/create-visit';
 import { Error } from './error';
 import { MuseumAutocomplete } from './museum-autocomplete';
 
@@ -43,17 +43,14 @@ const formSchema = z.object({
 	),
 });
 
-export interface AddVisitFormDialogProps extends DialogProps {
-	onCancel: () => void;
-}
+export type CreateVisitFormDialogProps = DialogProps;
 
-export function AddVisitFormDialog({
-	onCancel,
+export function CreateVisitFormDialog({
 	...props
-}: AddVisitFormDialogProps) {
+}: CreateVisitFormDialogProps) {
 	const queryClient = useQueryClient();
 	const { mutate, isPending } = useMutation({
-		mutationFn: addVisit,
+		mutationFn: createVisit,
 	});
 	const {
 		register,
@@ -103,7 +100,7 @@ export function AddVisitFormDialog({
 			{
 				onSuccess: () => {
 					setError('');
-					reset();
+					// reset();
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
 
 					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
@@ -204,7 +201,9 @@ export function AddVisitFormDialog({
 						onClick={() => {
 							setError('');
 							reset();
-							onCancel();
+							if (props.onClose) {
+								props.onClose({}, 'escapeKeyDown');
+							}
 						}}
 					>
 						Cancel

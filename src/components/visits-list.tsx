@@ -1,8 +1,6 @@
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
@@ -23,7 +21,7 @@ import {
 	getVisitedMuseums,
 	type GetVisitedMuseumsParams,
 } from '../api/museum/get-visited-museums';
-import { AddVisitFormDialog } from './add-visit-form-dialog';
+import { CreateVisitButton } from './create-visit-button';
 import { MuseumCard } from './museum-card';
 import { MuseumVisits } from './museum-visits';
 import { FilterButton } from './ui/filter-button';
@@ -181,16 +179,6 @@ export function VisitsList() {
 		}
 	}, [data, searchParams, selectedMuseum]);
 
-	const [openDialog, setOpenDialog] = useState(false);
-
-	const handleClickOpen = () => {
-		setOpenDialog(true);
-	};
-
-	const handleClose = () => {
-		setOpenDialog(false);
-	};
-
 	if (isPending) {
 		return <SkeletonScreen />;
 	}
@@ -224,25 +212,13 @@ export function VisitsList() {
 							numberOfFilters={numberOfFilters}
 						/>
 
-						<Button
-							variant="contained"
-							size="small"
-							onClick={handleClickOpen}
-							startIcon={<AddCircleOutlineOutlinedIcon />}
-						>
-							Create
-						</Button>
+						<CreateVisitButton />
 					</Stack>
 				)}
 			</Stack>
 			<Collapse in={openFilter}>
 				<VisitFilter handleChange={handleFilter} />
 			</Collapse>
-			<AddVisitFormDialog
-				open={openDialog}
-				onClose={handleClose}
-				onCancel={handleClose}
-			/>
 
 			{data.data.length > 0 ? (
 				<Box display="flex">
@@ -358,14 +334,7 @@ export function VisitsList() {
 						<Typography variant="h6" mb={2} fontWeight={500}>
 							It seems that you don't have any visits.
 						</Typography>
-						<Button
-							variant="contained"
-							size="small"
-							onClick={handleClickOpen}
-							startIcon={<AddCircleOutlineOutlinedIcon />}
-						>
-							Create
-						</Button>
+						<CreateVisitButton />
 					</Box>
 				</Box>
 			)}
