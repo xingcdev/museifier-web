@@ -1,9 +1,11 @@
+import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
@@ -125,7 +127,11 @@ export function AppHeader() {
 					<Box sx={{ flexGrow: 0 }}>
 						<Tooltip title="Open settings">
 							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-								<Avatar>H</Avatar>
+								<Avatar
+									alt="default avatar"
+									src="/avatar.png"
+									sx={{ bgcolor: 'grey.300', width: 48, height: 48 }}
+								/>
 							</IconButton>
 						</Tooltip>
 						<Menu
@@ -149,7 +155,12 @@ export function AppHeader() {
 									{user.username}
 								</Typography>
 							)}
-							<MenuItem onClick={() => logout()}>Log out</MenuItem>
+							<MenuItem onClick={() => logout()}>
+								<ListItemIcon>
+									<LogoutIcon fontSize="small" />
+								</ListItemIcon>
+								Log out
+							</MenuItem>
 						</Menu>
 					</Box>
 				</Stack>
