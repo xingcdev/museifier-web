@@ -13,6 +13,7 @@ import { AppHeader } from '../components/app-header';
 import { RequireAuth } from '../components/require-auth';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AppFooter } from '../components/ui/app-footer';
 
 const LinkBehavior = forwardRef<
 	HTMLAnchorElement,
@@ -67,6 +68,7 @@ export default function Layout() {
 					<Container sx={{ pt: 4 }}>
 						<Outlet />
 					</Container>
+					<AppFooter />
 				</ThemeProvider>
 			</LocalizationProvider>
 		</RequireAuth>
