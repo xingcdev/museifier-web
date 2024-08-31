@@ -177,7 +177,8 @@ export function VisitsList() {
 		if (data && data.data.length > 0 && selectedMuseum) {
 			setSelectedMuseumId(data.data[0].id);
 		}
-	}, [data, searchParams, selectedMuseum]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data, searchParams]);
 
 	if (isPending) {
 		return <SkeletonScreen />;
