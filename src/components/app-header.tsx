@@ -20,7 +20,7 @@ import { AppLogo } from './app-logo';
 
 const pages = [
 	{ href: '/visits', label: 'My visits' },
-	{ href: '/museums', label: 'Discover museums' },
+	{ href: '/map', label: 'Discover museums' },
 ];
 
 export function AppHeader() {
@@ -51,7 +51,7 @@ export function AppHeader() {
 	};
 
 	return (
-		<Paper component="header" sx={{ py: 2 }}>
+		<Paper component="header" sx={{ py: 1 }}>
 			<Container>
 				<Stack
 					direction="row"

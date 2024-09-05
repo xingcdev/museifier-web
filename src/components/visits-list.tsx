@@ -25,6 +25,7 @@ import { CreateVisitButton } from './create-visit-button';
 import { MuseumCard } from './museum-card';
 import { MuseumVisits } from './museum-visits';
 import { FilterButton } from './ui/filter-button';
+import { Page } from './ui/page';
 import { Search } from './ui/search';
 import { VisitFilter } from './visit-filter';
 
@@ -189,7 +190,7 @@ export function VisitsList() {
 	}
 
 	return (
-		<>
+		<Page>
 			<Stack
 				justifyContent="space-between"
 				alignItems="center"
@@ -339,7 +340,7 @@ export function VisitsList() {
 					</Box>
 				</Box>
 			)}
-		</>
+		</Page>
 	);
 }
 

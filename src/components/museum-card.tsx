@@ -27,11 +27,11 @@ export function MuseumCard({
 		>
 			<img src="/vite.svg" alt="museum" loading="lazy" />
 			<Box ml={2}>
-				<Typography fontWeight={500} textTransform="capitalize">
+				<Typography fontWeight={500} textTransform="capitalize" gutterBottom>
 					{name}
 				</Typography>
 				<Typography>{address}</Typography>
-				<Typography>
+				<Typography gutterBottom>
 					{postalCode} {city}
 				</Typography>
 				<Link color="text.secondary" href={url}>

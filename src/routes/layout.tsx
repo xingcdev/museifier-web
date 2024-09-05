@@ -1,8 +1,9 @@
 import { red } from '@mui/material/colors';
-import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import type { LinkProps } from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { forwardRef } from 'react';
 import {
 	Outlet,
@@ -11,8 +12,6 @@ import {
 } from 'react-router-dom';
 import { AppHeader } from '../components/app-header';
 import { RequireAuth } from '../components/require-auth';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { AppFooter } from '../components/ui/app-footer';
 
 const LinkBehavior = forwardRef<
@@ -65,9 +64,7 @@ export default function Layout() {
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
 					<AppHeader />
-					<Container sx={{ pt: 4 }}>
-						<Outlet />
-					</Container>
+					<Outlet />
 					<AppFooter />
 				</ThemeProvider>
 			</LocalizationProvider>
