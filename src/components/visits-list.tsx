@@ -26,6 +26,7 @@ import { MuseumCard } from './museum-card';
 import { MuseumVisits } from './museum-visits';
 import { FilterButton } from './ui/filter-button';
 import { Page } from './ui/page';
+import { NoSearchResultsFound } from './ui/placeholder/no-search-results-found';
 import { Search } from './ui/search';
 import { VisitFilter } from './visit-filter';
 
@@ -324,36 +325,15 @@ export function VisitsList() {
 					/>
 				</Box>
 			) : searchQueryParam || isFiltering ? (
-				<NoSearchResultsFound />
+				<NoSearchResultsFound>
+					Aucun résultat n'a été trouvé, veuillez essayer d'autres mots-clés.
+				</NoSearchResultsFound>
 			) : (
-				<Box display="flex" justifyContent="center" alignItems="center" py={10}>
-					<Box textAlign="center">
-						<img
-							src="/no-results-found.png"
-							alt="No results found"
-							width={400}
-						/>
-						<Typography variant="h6" mb={2} fontWeight={500}>
-							It seems that you don't have any visits.
-						</Typography>
-						<CreateVisitButton />
-					</Box>
-				</Box>
+				<NoSearchResultsFound>
+					Il semblerait que vous n'ayez aucune visite.
+				</NoSearchResultsFound>
 			)}
 		</Page>
-	);
-}
-
-function NoSearchResultsFound() {
-	return (
-		<Box display="flex" justifyContent="center" alignItems="center" py={10}>
-			<Box textAlign="center">
-				<img src="/no-results-found.png" alt="No results found" width={400} />
-				<Typography variant="subtitle1" fontWeight={500}>
-					No results are found, please try different keywords.
-				</Typography>
-			</Box>
-		</Box>
 	);
 }
 

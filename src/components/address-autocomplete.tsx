@@ -31,7 +31,7 @@ export interface AddressAutocompleteProps
 
 export const AddressAutocomplete = forwardRef(
 	(
-		{ error, helperText, ...props }: AddressAutocompleteProps,
+		{ error, helperText, onSearch, ...props }: AddressAutocompleteProps,
 		ref: React.Ref<HTMLDivElement>
 	) => {
 		// const [inputValue, setInputValue] = useState('');
@@ -51,8 +51,8 @@ export const AddressAutocomplete = forwardRef(
 
 		const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
 			e.preventDefault();
-			if (props.onSearch) {
-				props.onSearch();
+			if (onSearch) {
+				onSearch();
 			}
 		};
 

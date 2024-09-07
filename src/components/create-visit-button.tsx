@@ -1,9 +1,14 @@
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import Button from '@mui/material/Button';
+import Button, { type ButtonProps } from '@mui/material/Button';
 import { useState } from 'react';
 import { CreateVisitFormDialog } from './create-visit-form-dialog';
 
-export function CreateVisitButton() {
+type CreateVisitButtonProps = ButtonProps;
+
+export function CreateVisitButton({
+	children,
+	...props
+}: CreateVisitButtonProps) {
 	const [openDialog, setOpenDialog] = useState(false);
 
 	return (
@@ -13,8 +18,9 @@ export function CreateVisitButton() {
 				size="small"
 				onClick={() => setOpenDialog(true)}
 				startIcon={<AddCircleOutlineOutlinedIcon />}
+				{...props}
 			>
-				Create
+				{children ? children : 'Créer'}
 			</Button>
 			{openDialog && (
 				<CreateVisitFormDialog
