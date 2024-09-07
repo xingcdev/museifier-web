@@ -78,7 +78,7 @@ export function MuseumMap() {
 	const [currentLocation, setCurrentLocation] =
 		useState<LatLngExpression>(parisLocation);
 
-	const { data } = useQuery({
+	const { data, isPending } = useQuery({
 		queryKey: ['get-nearby-museums'],
 		queryFn: () => getNearbyMuseums(searchTerm),
 		enabled: enableSearch,
@@ -157,14 +157,14 @@ export function MuseumMap() {
 								))}
 							</Stack>
 						</>
-					) : searchTerm ? (
-						<NoSearchResultsFound>
-							Nous avons trouvé aucun musée à proximité.
-						</NoSearchResultsFound>
-					) : (
+					) : isPending ? (
 						<GetStarted>
 							Saisir une adresse dans la barre de recherche.
 						</GetStarted>
+					) : (
+						<NoSearchResultsFound>
+							Nous avons trouvé aucun musée à proximité.
+						</NoSearchResultsFound>
 					)}
 				</Box>
 				<MapContainer
