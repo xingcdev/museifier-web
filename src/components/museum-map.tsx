@@ -17,6 +17,7 @@ import {
 	Marker,
 	Popup,
 	TileLayer,
+	useMapEvent,
 	type PopupProps,
 } from 'react-leaflet';
 import { getNearbyMuseums } from '../api/museum/get-nearby-museums';
@@ -98,6 +99,15 @@ export function MuseumMap() {
 		}
 	}, [data, enableSearch]);
 
+	function DisableSelectedMarker() {
+		useMapEvent('click', () => {
+			if (selectedMarker) {
+				setSelectedMarker('');
+			}
+		});
+		return null;
+	}
+
 	return (
 		<>
 			<Box display="flex" height="91vh">
@@ -139,6 +149,7 @@ export function MuseumMap() {
 											city={museum.city}
 											url={museum.url}
 											totalVisits={museum.totalVisits}
+											distance={museum.distance}
 											onMouseEnter={() => setHoveredMarker(museum.id)}
 											onMouseLeave={() => setHoveredMarker('')}
 											sx={{
@@ -177,6 +188,7 @@ export function MuseumMap() {
 						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 					/>
+					<DisableSelectedMarker />
 
 					{data && data.data.length > 0
 						? data.data.map((museum, index) => (

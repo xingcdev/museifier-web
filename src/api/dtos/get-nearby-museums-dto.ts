@@ -10,4 +10,5 @@ export interface GetNearbyMuseumsDto {
 
 interface Data extends MuseumDto {
 	totalVisits: number;
+	distance: number;
 }

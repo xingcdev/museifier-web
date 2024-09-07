@@ -10,6 +10,7 @@ export interface NearbyMuseumCardProps extends CardProps {
 	city: string;
 	url: string;
 	totalVisits: number;
+	distance: number;
 }
 
 export function NearbyMuseumCard({
@@ -19,6 +20,7 @@ export function NearbyMuseumCard({
 	city,
 	url,
 	totalVisits,
+	distance,
 	...props
 }: NearbyMuseumCardProps) {
 	return (
@@ -41,6 +43,7 @@ export function NearbyMuseumCard({
 				</Link>
 			</Box>
 			<Box flexShrink={0} flexBasis={55} ml={3}>
+				<Typography variant="body2">{distance} km</Typography>
 				<Typography variant="body2">{totalVisits} visites</Typography>
 			</Box>
 		</Card>
