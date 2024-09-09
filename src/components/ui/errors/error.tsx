@@ -3,7 +3,7 @@ import Box, { type BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 export interface ApiErrorAlertProps extends BoxProps {
-	text: string;
+	text?: string;
 }
 
 export function Error({

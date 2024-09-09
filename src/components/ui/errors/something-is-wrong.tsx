@@ -1,9 +1,7 @@
 import Box, { type BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-type GetStartedProps = BoxProps;
-
-export function GetStarted({ children, ...props }: GetStartedProps) {
+export function SomethingIsWrong(props: BoxProps) {
 	return (
 		<Box
 			{...props}
@@ -13,9 +11,13 @@ export function GetStarted({ children, ...props }: GetStartedProps) {
 			py={10}
 		>
 			<Box textAlign="center">
-				<img src="/get-started.png" alt="No results found" width={400} />
+				<img
+					src="/something-is-wrong.png"
+					alt="Something is wrong"
+					width={400}
+				/>
 				<Typography variant="subtitle1" fontWeight={500}>
-					{children}
+					Something is wrong, please try again.
 				</Typography>
 			</Box>
 		</Box>

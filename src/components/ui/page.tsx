@@ -1,6 +1,5 @@
-import Container from '@mui/material/Container';
-import type { ReactNode } from 'react';
+import Container, { type ContainerProps } from '@mui/material/Container';
 
-export function Page({ children }: { children: ReactNode }) {
-	return <Container sx={{ pt: 4 }}>{children}</Container>;
+export function Page({ sx, ...props }: ContainerProps) {
+	return <Container {...props} sx={{ pt: 4, ...sx }} />;
 }

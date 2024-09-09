@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-export function LoadingPage() {
+export function Loading() {
 	return (
 		<Box
 			display="flex"
@@ -9,7 +9,7 @@ export function LoadingPage() {
 			alignItems="center"
 			width="100%"
 			flexDirection="column"
-			py={35}
+			py={30}
 		>
 			<Box
 				sx={{

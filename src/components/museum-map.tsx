@@ -1,17 +1,22 @@
-import { Typography } from '@mui/material';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import { styled, useTheme } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { useQuery } from '@tanstack/react-query';
+import { useDebounce } from '@uidotdev/usehooks';
 import L, {
-	LatLngExpression,
+	latLng,
 	Map,
 	type DivIcon,
+	type LatLngTuple,
 	type Marker as MarkerType,
 } from 'leaflet';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	MapContainer,
 	Marker,
@@ -20,14 +25,19 @@ import {
 	useMapEvent,
 	type PopupProps,
 } from 'react-leaflet';
+import { useSearchParams } from 'react-router-dom';
+import { geocode } from '../api/geocoding/geocode';
+import { getAddressAutocompletion } from '../api/geocoding/get-address-autocompletion';
 import { getNearbyMuseums } from '../api/museum/get-nearby-museums';
 import { AddressAutocomplete } from './address-autocomplete';
 import { CreateVisitButton } from './create-visit-button';
 import { NearbyMuseumCard } from './nearby-museum-card';
+import { SomethingIsWrong } from './ui/errors/something-is-wrong';
+import { Loading } from './ui/loading';
 import { GetStarted } from './ui/placeholder/get-started';
 import { NoSearchResultsFound } from './ui/placeholder/no-search-results-found';
 
-const parisLocation: LatLngExpression = [48.8566, 2.3522];
+const PARIS_LOCATION: LatLngTuple = [48.8566, 2.3522];
 
 const StyledPopup = styled(Popup)<PopupProps>(({ theme }) => ({
 	width: 360,
@@ -42,14 +52,7 @@ const StyledPopup = styled(Popup)<PopupProps>(({ theme }) => ({
 	},
 }));
 
-const MarkerIcon = (
-	number: number,
-	isHighlighted: boolean = false
-): DivIcon => {
-	const theme = useTheme();
-	const color = isHighlighted
-		? theme.palette.secondary.main
-		: theme.palette.primary.main;
+const createMarkerIcon = (number: number, color: string): DivIcon => {
 	const badgeClass = number ? 'museum-map-marker__badge' : 'hidden';
 
 	return L.divIcon({
@@ -69,35 +72,99 @@ const MarkerIcon = (
 };
 
 export function MuseumMap() {
+	const theme = useTheme();
 	const mapRef = useRef<Map>(null);
 	const popupRefs = useRef<MarkerType[]>([]);
 	const [hoveredMarker, setHoveredMarker] = useState('');
 	const [selectedMarker, setSelectedMarker] = useState('');
 
-	const [searchTerm, setSearchTerm] = useState('');
-	const [enableSearch, setEnableSearch] = useState(false);
-	const [currentLocation, setCurrentLocation] =
-		useState<LatLngExpression>(parisLocation);
+	const [searchParams, setSearchParams] = useSearchParams();
+	const addressParam = useMemo(
+		() => searchParams.get('q') || '',
+		[searchParams]
+	);
+	const currentLocation = useMemo(
+		() =>
+			searchParams
+				.get('location')
+				?.split(',')
+				.map((location) => parseFloat(location)) || null,
+		[searchParams]
+	);
 
-	const { data, isPending } = useQuery({
-		queryKey: ['get-nearby-museums'],
-		queryFn: () => getNearbyMuseums(searchTerm),
-		enabled: enableSearch,
+	const [autocompleteValue, setAutocompleteValue] = useState<string | null>(
+		null
+	);
+
+	//  ====== 1. Initialization of auto complete ======
+	// Logic: <Autocomplete /> changes the 'q' search param --> perform the geocoding--> update 'location' search param --> perform nearby museums request
+
+	useQuery({
+		queryKey: ['init-address-autocompletion'],
+		queryFn: async () => {
+			const data = await getAddressAutocompletion(addressParam, 1);
+			if (data) {
+				const firstAddress = data.features[0].properties.label;
+				setAutocompleteValue(firstAddress);
+				searchParams.set('q', firstAddress);
+				setSearchParams(searchParams);
+			}
+			return data;
+		},
+		retry: false,
 	});
 
-	function setView(lat: number, lon: number) {
-		if (mapRef.current) {
-			mapRef.current.setView([lat, lon]);
-		}
-	}
+	//  ====== 2. Geocode the address ======
+	// When the search param 'q' changes, this geocoding query is performed
 
-	useEffect(() => {
-		if (enableSearch && data) {
-			setCurrentLocation([data.latitude, data.longitude]);
-			setEnableSearch(false);
-			setView(data.latitude, data.longitude);
-		}
-	}, [data, enableSearch]);
+	useQuery({
+		queryKey: ['geocode', addressParam],
+		queryFn: async () => {
+			const data = await geocode(addressParam);
+			if (data && data.length == 2) {
+				searchParams.set('location', `${data[1]},${data[0]}`);
+				setSearchParams(searchParams);
+			}
+			return data;
+		},
+		enabled: !!addressParam,
+	});
+
+	//  ====== Autocomplete search ======
+
+	const [searchTerm, setSearchTerm] = useState('');
+	const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+
+	const {
+		data: addressAutoCompletion,
+		isPending: addressAutoCompletionLoading,
+	} = useQuery({
+		queryKey: ['address-autocompletion', debouncedSearchTerm],
+		queryFn: () => getAddressAutocompletion(debouncedSearchTerm),
+		select: (data) => data.features.map((feature) => feature.properties.label),
+		enabled: debouncedSearchTerm.length >= 5,
+	});
+
+	// ====================================
+
+	const { data, isPending, isFetching, isError } = useQuery({
+		queryKey: ['get-nearby-museums', currentLocation],
+		queryFn: async () => {
+			if (currentLocation) {
+				const data = await getNearbyMuseums(
+					currentLocation[0],
+					currentLocation[1]
+				);
+				if (mapRef.current && data.data) {
+					mapRef.current.setView([currentLocation[0], currentLocation[1]]);
+				}
+				return data;
+			}
+			return;
+		},
+		// Do not fetch at the initial load
+		enabled: !!currentLocation,
+	});
 
 	function DisableSelectedMarker() {
 		useMapEvent('click', () => {
@@ -106,6 +173,30 @@ export function MuseumMap() {
 			}
 		});
 		return null;
+	}
+
+	function handleAutocompleteSearch() {
+		if (autocompleteValue) {
+			searchParams.set('q', autocompleteValue);
+		} else {
+			searchParams.delete('q');
+			searchParams.delete('location');
+		}
+		setSearchParams(searchParams);
+	}
+
+	function getMyLocation() {
+		if (!navigator.geolocation) {
+			return;
+		}
+
+		navigator.geolocation.getCurrentPosition((position) => {
+			const { latitude, longitude } = position.coords;
+			searchParams.set('location', `${latitude},${longitude}`);
+			searchParams.delete('q');
+			setSearchParams(searchParams);
+			setAutocompleteValue(null);
+		});
 	}
 
 	return (
@@ -119,16 +210,34 @@ export function MuseumMap() {
 						Trouvez facilement les musées les plus proches de chez vous
 					</Typography>
 
-					<AddressAutocomplete
-						inputValue={searchTerm}
-						onInputChange={(_, newValue) => setSearchTerm(newValue)}
-						sx={{ my: 4 }}
-						onSearch={() => setEnableSearch(true)}
-					/>
-					{data && data.totalResults > 0 ? (
+					<Stack direction="row" spacing={2} my={4}>
+						<AddressAutocomplete
+							inputValue={searchTerm}
+							onInputChange={(_, newValue) => {
+								setSearchTerm(newValue);
+							}}
+							value={autocompleteValue}
+							onChange={(_, newValue) => {
+								setAutocompleteValue(newValue);
+							}}
+							loading={searchTerm.length > 5 && addressAutoCompletionLoading}
+							options={addressAutoCompletion || []}
+							sx={{ flexGrow: 1 }}
+							onSearch={handleAutocompleteSearch}
+						/>
+						<Tooltip title="Se géolocaliser">
+							<IconButton onClick={getMyLocation}>
+								<MyLocationIcon />
+							</IconButton>
+						</Tooltip>
+					</Stack>
+					{isError ? (
+						<SomethingIsWrong />
+					) : data && data.totalResults > 0 ? (
 						<>
 							<Typography gutterBottom>
-								{data.totalResults} résultats à proximité de "{data.query}"
+								{data.totalResults} résultats à proximité de "
+								{addressParam ? addressParam : 'Ma position'}"
 							</Typography>
 							<Stack spacing={2}>
 								{data.data.map((museum, index) => (
@@ -168,6 +277,8 @@ export function MuseumMap() {
 								))}
 							</Stack>
 						</>
+					) : isFetching ? (
+						<Loading />
 					) : isPending ? (
 						<GetStarted>
 							Saisir une adresse dans la barre de recherche.
@@ -180,7 +291,11 @@ export function MuseumMap() {
 				</Box>
 				<MapContainer
 					ref={mapRef}
-					center={currentLocation}
+					center={
+						currentLocation
+							? latLng(currentLocation[0], currentLocation[1])
+							: PARIS_LOCATION
+					}
 					zoom={13}
 					style={{ height: '100%', flexGrow: 1 }}
 				>
@@ -191,72 +306,86 @@ export function MuseumMap() {
 					<DisableSelectedMarker />
 
 					{data && data.data.length > 0
-						? data.data.map((museum, index) => (
-								<Marker
-									key={museum.id}
-									position={[museum.latitude, museum.longitude]}
-									icon={
-										selectedMarker === museum.id
-											? MarkerIcon(museum.totalVisits, true)
-											: hoveredMarker === museum.id
-											? MarkerIcon(museum.totalVisits, true)
-											: MarkerIcon(museum.totalVisits)
-									}
-									eventHandlers={{
-										click: () => setSelectedMarker(museum.id),
-										mouseover: () => setHoveredMarker(museum.id),
-										mouseout: () => setHoveredMarker(''),
-									}}
-									ref={(ref) => (popupRefs.current[index] = ref as MarkerType)}
-								>
-									<StyledPopup>
-										<Box marginBottom={2.5}>
-											<Typography
-												fontWeight={500}
-												textTransform="capitalize"
-												marginBottom={2}
-											>
-												{museum.name}
-											</Typography>
-											<Typography>
-												{museum.address} {museum.postalCode} {museum.city}
-											</Typography>
+						? data.data.map((museum, index) => {
+								const defaultMarkerIcon = createMarkerIcon(
+									museum.totalVisits,
+									theme.palette.primary.main
+								);
 
-											<Link href={museum.url} sx={{ marginBottom: 1.5 }}>
-												{museum.url}
-											</Link>
-										</Box>
+								const highlightedMarkerIcon = createMarkerIcon(
+									museum.totalVisits,
+									theme.palette.secondary.main
+								);
 
-										{museum.totalVisits ? (
-											<Typography color="text.secondary" variant="body2">
-												Vous avez visité{' '}
+								return (
+									<Marker
+										key={museum.id}
+										position={[museum.latitude, museum.longitude]}
+										icon={
+											selectedMarker === museum.id
+												? highlightedMarkerIcon
+												: hoveredMarker === museum.id
+												? highlightedMarkerIcon
+												: defaultMarkerIcon
+										}
+										eventHandlers={{
+											click: () => setSelectedMarker(museum.id),
+											mouseover: () => setHoveredMarker(museum.id),
+											mouseout: () => setHoveredMarker(''),
+										}}
+										ref={(ref) =>
+											(popupRefs.current[index] = ref as MarkerType)
+										}
+									>
+										<StyledPopup>
+											<Box marginBottom={2.5}>
 												<Typography
-													color="primary"
-													component="span"
 													fontWeight={500}
-													variant="body2"
+													textTransform="capitalize"
+													marginBottom={2}
 												>
-													{museum.totalVisits}
-												</Typography>{' '}
-												fois ce musée.
-											</Typography>
-										) : (
-											<Typography color="text.secondary" variant="body2">
-												Vous n'avez pas encore visité ce musée.
-											</Typography>
-										)}
+													{museum.name}
+												</Typography>
+												<Typography>
+													{museum.address} {museum.postalCode} {museum.city}
+												</Typography>
 
-										<Stack direction="row" spacing={2}>
-											<CreateVisitButton variant="outlined" color="info">
-												Créer une visite
-											</CreateVisitButton>
-											<Button variant="outlined" color="info" size="small">
-												Voir les visites
-											</Button>
-										</Stack>
-									</StyledPopup>
-								</Marker>
-						  ))
+												<Link href={museum.url} sx={{ marginBottom: 1.5 }}>
+													{museum.url}
+												</Link>
+											</Box>
+
+											{museum.totalVisits ? (
+												<Typography color="text.secondary" variant="body2">
+													Vous avez visité{' '}
+													<Typography
+														color="primary"
+														component="span"
+														fontWeight={500}
+														variant="body2"
+													>
+														{museum.totalVisits}
+													</Typography>{' '}
+													fois ce musée.
+												</Typography>
+											) : (
+												<Typography color="text.secondary" variant="body2">
+													Vous n'avez pas encore visité ce musée.
+												</Typography>
+											)}
+
+											<Stack direction="row" spacing={2}>
+												<CreateVisitButton variant="outlined" color="info">
+													Créer une visite
+												</CreateVisitButton>
+												<Button variant="outlined" color="info" size="small">
+													Voir les visites
+												</Button>
+											</Stack>
+										</StyledPopup>
+									</Marker>
+								);
+						  })
 						: 'no museums'}
 				</MapContainer>
 			</Box>

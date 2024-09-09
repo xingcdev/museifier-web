@@ -14,7 +14,7 @@ import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { updateVisit } from '../api/visit/update-visit';
-import { Error } from './error';
+import { Error } from './ui/errors/error';
 
 const formSchema = z.object({
 	title: z

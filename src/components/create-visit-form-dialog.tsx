@@ -17,8 +17,8 @@ import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { createVisit } from '../api/visit/create-visit';
-import { Error } from './error';
 import { MuseumAutocomplete } from './museum-autocomplete';
+import { Error } from './ui/errors/error';
 
 const formSchema = z.object({
 	title: z
