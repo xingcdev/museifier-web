@@ -29,6 +29,7 @@ import { useSearchParams } from 'react-router-dom';
 import { geocode } from '../api/geocoding/geocode';
 import { getAddressAutocompletion } from '../api/geocoding/get-address-autocompletion';
 import { getNearbyMuseums } from '../api/museum/get-nearby-museums';
+import { StringUtils } from '../utils/string-utils';
 import { AddressAutocomplete } from './address-autocomplete';
 import { CreateVisitButton } from './create-visit-button';
 import { NearbyMuseumCard } from './nearby-museum-card';
@@ -256,7 +257,7 @@ export function MuseumMap() {
 											address={museum.address}
 											postalCode={museum.postalCode}
 											city={museum.city}
-											url={museum.url}
+											url={museum.url || ''}
 											totalVisits={museum.totalVisits}
 											distance={museum.distance}
 											onMouseEnter={() => setHoveredMarker(museum.id)}
@@ -350,9 +351,11 @@ export function MuseumMap() {
 													{museum.address} {museum.postalCode} {museum.city}
 												</Typography>
 
-												<Link href={museum.url} sx={{ marginBottom: 1.5 }}>
-													{museum.url}
-												</Link>
+												{museum.url && (
+													<Link href={museum.url} sx={{ marginBottom: 1.5 }}>
+														{StringUtils.truncate(museum.url, 60)}
+													</Link>
+												)}
 											</Box>
 
 											{museum.totalVisits ? (

@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Card, { type CardProps } from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { StringUtils } from '../utils/string-utils';
 
 export interface NearbyMuseumCardProps extends CardProps {
 	name: string;
@@ -39,7 +40,7 @@ export function NearbyMuseumCard({
 					{postalCode} {city}
 				</Typography>
 				<Link color="text.secondary" href={url}>
-					{url}
+					{StringUtils.truncate(url, 60)}
 				</Link>
 			</Box>
 			<Box flexShrink={0} flexBasis={55} ml={3}>
