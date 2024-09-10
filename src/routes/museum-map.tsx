@@ -30,14 +30,14 @@ import { useSearchParams } from 'react-router-dom';
 import { geocode } from '../api/geocoding/geocode';
 import { getAddressAutocompletion } from '../api/geocoding/get-address-autocompletion';
 import { getNearbyMuseums } from '../api/museum/get-nearby-museums';
+import { AddressAutocomplete } from '../components/address-autocomplete';
+import { CreateMuseumVisitFormDialog } from '../components/create-museum-visit-form-dialog';
+import { NearbyMuseumCard } from '../components/nearby-museum-card';
+import { SomethingIsWrong } from '../components/ui/errors/something-is-wrong';
+import { Loading } from '../components/ui/loading';
+import { GetStarted } from '../components/ui/placeholder/get-started';
+import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-results-found';
 import { StringUtils } from '../utils/string-utils';
-import { AddressAutocomplete } from './address-autocomplete';
-import { CreateMuseumVisitFormDialog } from './create-museum-visit-form-dialog';
-import { NearbyMuseumCard } from './nearby-museum-card';
-import { SomethingIsWrong } from './ui/errors/something-is-wrong';
-import { Loading } from './ui/loading';
-import { GetStarted } from './ui/placeholder/get-started';
-import { NoSearchResultsFound } from './ui/placeholder/no-search-results-found';
 
 const PARIS_LOCATION: LatLngTuple = [48.8566, 2.3522];
 

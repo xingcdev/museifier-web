@@ -22,16 +22,16 @@ import {
 	getVisitedMuseums,
 	type GetVisitedMuseumsParams,
 } from '../api/museum/get-visited-museums';
-import { CreateVisitButton } from './create-visit-button';
-import { MuseumCard } from './museum-card';
-import { MuseumVisits } from './museum-visits';
-import { FilterButton } from './ui/filter-button';
-import { Page } from './ui/page';
-import { NoSearchResultsFound } from './ui/placeholder/no-search-results-found';
-import { Search } from './ui/search';
-import { VisitFilter } from './visit-filter';
+import { CreateVisitButton } from '../components/create-visit-button';
+import { MuseumCard } from '../components/museum-card';
+import { MuseumVisits } from '../components/museum-visits';
+import { FilterButton } from '../components/ui/filter-button';
+import { Page } from '../components/ui/page';
+import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-results-found';
+import { Search } from '../components/ui/search';
+import { VisitFilter } from '../components/visit-filter';
 
-export function VisitsList() {
+export function MuseumsList() {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const selectedMuseumId = searchParams.get('id');
@@ -220,7 +220,7 @@ export function VisitsList() {
 				pb={3}
 			>
 				<Typography variant="h5" component="h1">
-					My visited museums
+					Mes visites de musée
 				</Typography>
 				{(data.data.length > 0 || searchQueryParam || isFiltering) && (
 					<Stack direction="row" spacing={2}>

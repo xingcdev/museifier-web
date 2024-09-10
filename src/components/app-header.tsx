@@ -18,10 +18,7 @@ import { logout as logoutFn } from '../api/auth';
 import { UseAuth } from '../hooks/useAuth';
 import { AppLogo } from './app-logo';
 
-const pages = [
-	{ href: '/visits', label: 'My visits' },
-	{ href: '/map', label: 'Discover museums' },
-];
+const pages = [{ href: '/map', label: 'Découvrir les musées' }];
 
 export function AppHeader() {
 	const { mutate: logout } = useMutation({

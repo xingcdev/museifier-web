@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AuthCallback } from './components/auth-callback';
-import { MuseumMap } from './components/museum-map';
-import { VisitsList } from './components/visits-list';
 import Layout from './routes/layout';
+import { MuseumMap } from './routes/museum-map';
+import { MuseumsList } from './routes/museums-list';
 
 export const router = createBrowserRouter([
 	{
@@ -10,8 +10,8 @@ export const router = createBrowserRouter([
 		element: <Layout />,
 		children: [
 			{
-				path: 'visits',
-				element: <VisitsList />,
+				path: '',
+				element: <MuseumsList />,
 			},
 			{
 				path: 'map',
