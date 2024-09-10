@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
 	useEffect,
+	useMemo,
 	useState,
 	type ChangeEvent,
 	type FormEventHandler,
@@ -31,12 +32,19 @@ import { Search } from './ui/search';
 import { VisitFilter } from './visit-filter';
 
 export function VisitsList() {
-	const [selectedMuseumId, setSelectedMuseumId] = useState('');
+	const [searchParams, setSearchParams] = useSearchParams();
 
+	const selectedMuseumId = searchParams.get('id');
+
+	function setSelectedMuseumId2(value: string) {
+		searchParams.set('id', value);
+		setSearchParams(searchParams);
+	}
+
+	// ====== Filtering ======
 	const [openFilter, setOpenFilter] = useState(false);
 	const [numberOfFilters, setNumberOfFilters] = useState(0);
 
-	const [searchParams, setSearchParams] = useSearchParams();
 	const pageParam = searchParams.get('page');
 	const page = pageParam ? parseInt(pageParam) : 1;
 	const sizeParam = searchParams.get('size');
@@ -51,6 +59,7 @@ export function VisitsList() {
 	const sortParams = searchParams.get('sort')?.split(':') || [];
 	const sortField = sortParams[0] ? sortParams[0] : 'name';
 	const sortOrder = sortParams[1] ? sortParams[1] : 'asc';
+	const isSorting = sortParams.length > 0;
 
 	const getVisitedMuseumsParams: GetVisitedMuseumsParams = {
 		page,
@@ -64,7 +73,24 @@ export function VisitsList() {
 
 	const { isPending, isError, error, data } = useQuery({
 		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
-		queryFn: () => getVisitedMuseums(getVisitedMuseumsParams),
+		queryFn: async () => {
+			const data = await getVisitedMuseums(getVisitedMuseumsParams);
+
+			if (data && data.data.length > 0) {
+				// select the first museum on the first loading
+				if (!selectedMuseumId) {
+					setSelectedMuseumId2(data.data[0].id);
+					// Select the first museum when filtering
+				} else if (isFiltering || isSorting) {
+					setSelectedMuseumId2(data.data[0].id);
+				}
+			} else {
+				// When the user has no visits
+				searchParams.delete('id');
+				setSearchParams(searchParams);
+			}
+			return data;
+		},
 		placeholderData: keepPreviousData,
 	});
 
@@ -89,6 +115,10 @@ export function VisitsList() {
 		} else {
 			searchParams.delete('sort');
 		}
+		// Default sorting param
+		if (searchParams.get('sort') === 'name:asc') {
+			searchParams.delete('sort');
+		}
 		setSearchParams(searchParams);
 	}
 
@@ -99,6 +129,10 @@ export function VisitsList() {
 		} else {
 			const newValue = `${sortField}:asc`;
 			searchParams.set('sort', newValue);
+		}
+		// Default sorting param
+		if (searchParams.get('sort') === 'name:asc') {
+			searchParams.delete('sort');
 		}
 		setSearchParams(searchParams);
 	}
@@ -164,23 +198,10 @@ export function VisitsList() {
 
 	// =======================
 
-	const selectedMuseum =
-		data?.data.find((museum) => museum.id === selectedMuseumId) || null;
-
-	// Initial museum id
-	useEffect(() => {
-		if (data && data.data.length > 0 && !selectedMuseum) {
-			setSelectedMuseumId(data.data[0].id);
-		}
-	}, [data, selectedMuseum]);
-
-	// If we change the pagination, sorting, filtering, select the first museum in the list.
-	useEffect(() => {
-		if (data && data.data.length > 0 && selectedMuseum) {
-			setSelectedMuseumId(data.data[0].id);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [data, searchParams]);
+	const selectedMuseum = useMemo(
+		() => data?.data.find((museum) => museum.id === selectedMuseumId) || null,
+		[data, selectedMuseumId]
+	);
 
 	if (isPending) {
 		return <SkeletonScreen />;
@@ -276,7 +297,7 @@ export function VisitsList() {
 							{data.data.map((museum) => (
 								<Box
 									key={museum.id}
-									onClick={() => setSelectedMuseumId(museum.id)}
+									onClick={() => setSelectedMuseumId2(museum.id)}
 									sx={{
 										cursor: 'pointer',
 									}}
@@ -329,9 +350,14 @@ export function VisitsList() {
 					Aucun résultat n'a été trouvé, veuillez essayer d'autres mots-clés.
 				</NoSearchResultsFound>
 			) : (
-				<NoSearchResultsFound>
-					Il semblerait que vous n'ayez aucune visite.
-				</NoSearchResultsFound>
+				<>
+					<NoSearchResultsFound>
+						<Typography mb={2}>
+							Il semblerait que vous n'ayez aucune visite.
+						</Typography>
+						<CreateVisitButton />
+					</NoSearchResultsFound>
+				</>
 			)}
 		</Page>
 	);
