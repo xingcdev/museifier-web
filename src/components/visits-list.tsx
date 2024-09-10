@@ -81,7 +81,7 @@ export function VisitsList() {
 				if (!selectedMuseumId) {
 					setSelectedMuseumId2(data.data[0].id);
 					// Select the first museum when filtering
-				} else if (isFiltering || isSorting) {
+				} else if (isFiltering || isSorting || searchQueryParam) {
 					setSelectedMuseumId2(data.data[0].id);
 				}
 			} else {
