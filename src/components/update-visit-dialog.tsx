@@ -7,11 +7,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
+import type { VisitDto } from '../api/dtos/visitDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { updateVisit } from '../api/visit/update-visit';
 import { Error } from './ui/errors/error';
@@ -33,14 +34,15 @@ export interface UpdateVisitDialogProps extends DialogProps {
 		title: string;
 		comment: string;
 	};
+	onSuccess?: (data: VisitDto) => void;
 }
 
 export function UpdateVisitDialog({
 	visitId,
 	initialValues,
+	onSuccess,
 	...props
 }: UpdateVisitDialogProps) {
-	const queryClient = useQueryClient();
 	const { mutate, isPending } = useMutation({
 		mutationFn: updateVisit,
 	});
@@ -75,10 +77,12 @@ export function UpdateVisitDialog({
 				comment: values.comment,
 			},
 			{
-				onSuccess: () => {
+				onSuccess: (data) => {
 					setError('');
 					// reset();
-					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
+					if (onSuccess) {
+						onSuccess(data);
+					}
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
 				},
 				onError: (error) => {

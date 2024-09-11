@@ -18,6 +18,7 @@ import { isErrorDto } from '../api/dtos/errorDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { createVisit } from '../api/visit/create-visit';
 import { Error } from './ui/errors/error';
+import type { VisitDto } from '../api/dtos/visitDto';
 
 const formSchema = z.object({
 	title: z
@@ -38,13 +39,13 @@ const formSchema = z.object({
 export interface CreateMuseumVisitFormDialogProps extends DialogProps {
 	museumId: string;
 	museumName: string;
-	onQuerySuccess?: () => void;
+	onSuccess?: (data: VisitDto) => void;
 }
 
 export function CreateMuseumVisitFormDialog({
 	museumId,
 	museumName,
-	onQuerySuccess,
+	onSuccess,
 	...props
 }: CreateMuseumVisitFormDialogProps) {
 	const { mutate, isPending } = useMutation({
@@ -92,12 +93,12 @@ export function CreateMuseumVisitFormDialog({
 				museumId,
 			},
 			{
-				onSuccess: () => {
+				onSuccess: (data) => {
 					setError('');
 					// reset();
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
-					if (onQuerySuccess) {
-						onQuerySuccess();
+					if (onSuccess) {
+						onSuccess(data);
 					}
 				},
 				onError: (error) => {

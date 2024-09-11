@@ -1,14 +1,11 @@
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import Box from '@mui/material/Box';
-import Button, { type ButtonProps } from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import L, {
 	latLng,
@@ -18,41 +15,20 @@ import L, {
 	type Marker as MarkerType,
 } from 'leaflet';
 import { useMemo, useRef, useState } from 'react';
-import {
-	MapContainer,
-	Marker,
-	Popup,
-	TileLayer,
-	useMapEvent,
-	type PopupProps,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvent } from 'react-leaflet';
 import { useSearchParams } from 'react-router-dom';
 import { geocode } from '../api/geocoding/geocode';
 import { getAddressAutocompletion } from '../api/geocoding/get-address-autocompletion';
 import { getNearbyMuseums } from '../api/museum/get-nearby-museums';
 import { AddressAutocomplete } from '../components/address-autocomplete';
-import { CreateMuseumVisitFormDialog } from '../components/create-museum-visit-form-dialog';
 import { NearbyMuseumCard } from '../components/nearby-museum-card';
 import { SomethingIsWrong } from '../components/ui/errors/something-is-wrong';
 import { Loading } from '../components/ui/loading';
+import { MuseumMapMarker } from '../components/ui/museum-map-marker';
 import { GetStarted } from '../components/ui/placeholder/get-started';
 import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-results-found';
-import { StringUtils } from '../utils/string-utils';
 
 const PARIS_LOCATION: LatLngTuple = [48.8566, 2.3522];
-
-const StyledPopup = styled(Popup)<PopupProps>(({ theme }) => ({
-	width: 360,
-	'& .leaflet-popup-content': {
-		width: '360px !important',
-		margin: 0,
-		padding: theme.spacing(2),
-	},
-	'& .leaflet-popup-content p': {
-		marginBottom: theme.spacing(1),
-		marginTop: 0,
-	},
-}));
 
 const createMarkerIcon = (number: number, color: string): DivIcon => {
 	const badgeClass = number ? 'museum-map-marker__badge' : 'hidden';
@@ -320,8 +296,9 @@ export function MuseumMap() {
 								);
 
 								return (
-									<Marker
+									<MuseumMapMarker
 										key={museum.id}
+										museum={museum}
 										position={[museum.latitude, museum.longitude]}
 										icon={
 											selectedMarker === museum.id
@@ -338,110 +315,12 @@ export function MuseumMap() {
 										ref={(ref) =>
 											(popupRefs.current[index] = ref as MarkerType)
 										}
-									>
-										<StyledPopup>
-											<Box marginBottom={2.5}>
-												<Typography
-													fontWeight={500}
-													textTransform="capitalize"
-													marginBottom={2}
-												>
-													{museum.name}
-												</Typography>
-												<Typography>
-													{museum.address} {museum.postalCode} {museum.city}
-												</Typography>
-
-												{museum.url && (
-													<Link href={museum.url} sx={{ marginBottom: 1.5 }}>
-														{StringUtils.truncate(museum.url, 60)}
-													</Link>
-												)}
-											</Box>
-
-											{museum.totalVisits ? (
-												<Typography color="text.secondary" variant="body2">
-													Vous avez visité{' '}
-													<Typography
-														color="primary"
-														component="span"
-														fontWeight={500}
-														variant="body2"
-													>
-														{museum.totalVisits}
-													</Typography>{' '}
-													fois ce musée.
-												</Typography>
-											) : (
-												<Typography color="text.secondary" variant="body2">
-													Vous n'avez pas encore visité ce musée.
-												</Typography>
-											)}
-
-											<Stack direction="row" spacing={2}>
-												<CreateMuseumVisitButton
-													museumId={museum.id}
-													museumName={museum.name}
-												/>
-												{museum.totalVisits ? (
-													<Button
-														variant="outlined"
-														color="info"
-														size="small"
-														href={`/visits?id=${museum.id}`}
-													>
-														Voir les visites
-													</Button>
-												) : null}
-											</Stack>
-										</StyledPopup>
-									</Marker>
+									/>
 								);
 						  })
 						: 'no museums'}
 				</MapContainer>
 			</Box>
-		</>
-	);
-}
-
-interface CreateMuseumVisitButtonProps extends ButtonProps {
-	museumId: string;
-	museumName: string;
-}
-
-function CreateMuseumVisitButton({
-	museumId,
-	museumName,
-	...props
-}: CreateMuseumVisitButtonProps) {
-	const queryClient = useQueryClient();
-
-	const [openDialog, setOpenDialog] = useState(false);
-
-	return (
-		<>
-			<Button
-				size="small"
-				variant="outlined"
-				color="info"
-				onClick={() => setOpenDialog(true)}
-				startIcon={<AddCircleOutlineOutlinedIcon />}
-				{...props}
-			>
-				Créer une visite
-			</Button>
-			{openDialog && (
-				<CreateMuseumVisitFormDialog
-					museumId={museumId}
-					museumName={museumName}
-					open={openDialog}
-					onQuerySuccess={() =>
-						queryClient.invalidateQueries({ queryKey: ['get-nearby-museums'] })
-					}
-					onClose={() => setOpenDialog(false)}
-				/>
-			)}
 		</>
 	);
 }

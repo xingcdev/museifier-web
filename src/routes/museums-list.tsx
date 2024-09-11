@@ -9,7 +9,11 @@ import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import {
+	keepPreviousData,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
 import {
 	useEffect,
 	useMemo,
@@ -24,7 +28,7 @@ import {
 } from '../api/museum/get-visited-museums';
 import { CreateVisitButton } from '../components/create-visit-button';
 import { MuseumCard } from '../components/museum-card';
-import { MuseumVisits } from '../components/museum-visits';
+import { MuseumListVisits } from '../components/museum-list-visits';
 import { FilterButton } from '../components/ui/filter-button';
 import { Page } from '../components/ui/page';
 import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-results-found';
@@ -32,6 +36,7 @@ import { Search } from '../components/ui/search';
 import { VisitFilter } from '../components/visit-filter';
 
 export function MuseumsList() {
+	const queryClient = useQueryClient();
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const selectedMuseumId = searchParams.get('id');
@@ -331,7 +336,7 @@ export function MuseumsList() {
 						</Box>
 					</Box>
 
-					<MuseumVisits
+					<MuseumListVisits
 						visits={selectedMuseum?.visits || []}
 						sx={{
 							flexBasis: 0,
@@ -340,7 +345,7 @@ export function MuseumsList() {
 							p: 2,
 							position: 'sticky',
 							height: '93vh',
-							overflow: 'scroll',
+							overflow: 'auto',
 							top: 12,
 						}}
 					/>
@@ -351,11 +356,15 @@ export function MuseumsList() {
 				</NoSearchResultsFound>
 			) : (
 				<>
-					<NoSearchResultsFound>
+					<NoSearchResultsFound py={10}>
 						<Typography mb={2}>
 							Il semblerait que vous n'ayez aucune visite.
 						</Typography>
-						<CreateVisitButton />
+						<CreateVisitButton
+							onSuccess={() =>
+								queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] })
+							}
+						/>
 					</NoSearchResultsFound>
 				</>
 			)}

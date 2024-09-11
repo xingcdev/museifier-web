@@ -2,22 +2,24 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Typography } from '@mui/material';
 import type { ButtonProps } from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { deleteVisit } from '../api/visit/delete-visit';
 import { DeleteConfirmDialog } from './ui/delete-confirm-dialog';
+import type { VisitDto } from '../api/dtos/visitDto';
 
 export interface DeleteVisitButtonProps extends ButtonProps {
 	id: string;
 	visitName: string;
+	onSuccess?: (data: VisitDto) => void;
 }
 
 export function DeleteVisitButton({
 	id,
 	visitName,
+	onSuccess,
 	...props
 }: DeleteVisitButtonProps) {
-	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationFn: ({ id }: { id: string }) => deleteVisit(id),
 	});
@@ -27,9 +29,7 @@ export function DeleteVisitButton({
 		mutate(
 			{ id },
 			{
-				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
-				},
+				onSuccess: onSuccess ? onSuccess : undefined,
 			}
 		);
 	}

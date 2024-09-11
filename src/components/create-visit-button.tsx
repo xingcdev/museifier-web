@@ -2,11 +2,15 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import Button, { type ButtonProps } from '@mui/material/Button';
 import { useState } from 'react';
 import { CreateVisitFormDialog } from './create-visit-form-dialog';
+import type { VisitDto } from '../api/dtos/visitDto';
 
-type CreateVisitButtonProps = ButtonProps;
+interface CreateVisitButtonProps extends ButtonProps {
+	onSuccess?: (data: VisitDto) => void;
+}
 
 export function CreateVisitButton({
 	children,
+	onSuccess,
 	...props
 }: CreateVisitButtonProps) {
 	const [openDialog, setOpenDialog] = useState(false);
@@ -26,6 +30,7 @@ export function CreateVisitButton({
 				<CreateVisitFormDialog
 					open={openDialog}
 					onClose={() => setOpenDialog(false)}
+					onSuccess={onSuccess}
 				/>
 			)}
 		</>

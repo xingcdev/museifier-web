@@ -9,12 +9,13 @@ import Rating from '@mui/material/Rating';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
+import type { VisitDto } from '../api/dtos/visitDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { createVisit } from '../api/visit/create-visit';
 import { MuseumAutocomplete } from './museum-autocomplete';
@@ -43,12 +44,14 @@ const formSchema = z.object({
 	),
 });
 
-export type CreateVisitFormDialogProps = DialogProps;
+interface CreateVisitFormDialogProps extends DialogProps {
+	onSuccess?: (data: VisitDto) => void;
+}
 
 export function CreateVisitFormDialog({
+	onSuccess,
 	...props
 }: CreateVisitFormDialogProps) {
-	const queryClient = useQueryClient();
 	const { mutate, isPending } = useMutation({
 		mutationFn: createVisit,
 	});
@@ -98,12 +101,12 @@ export function CreateVisitFormDialog({
 				museumId: values.museum.id,
 			},
 			{
-				onSuccess: () => {
+				onSuccess: (data) => {
 					setError('');
-					// reset();
+					if (onSuccess) {
+						onSuccess(data);
+					}
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
-
-					queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] });
 				},
 				onError: (error) => {
 					setError('Something is wrong, please try again.');

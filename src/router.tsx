@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AuthCallback } from './components/auth-callback';
 import Layout from './routes/layout';
+import { Museum } from './routes/museum';
 import { MuseumMap } from './routes/museum-map';
 import { MuseumsList } from './routes/museums-list';
 
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
 			{
 				path: 'map',
 				element: <MuseumMap />,
+			},
+			{
+				path: 'museums/:museumId',
+				element: <Museum />,
 			},
 		],
 	},

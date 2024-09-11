@@ -8,13 +8,7 @@ export function NoSearchResultsFound({
 	...props
 }: NoSearchResultsFoundProps) {
 	return (
-		<Box
-			{...props}
-			display="flex"
-			justifyContent="center"
-			alignItems="center"
-			py={10}
-		>
+		<Box display="flex" justifyContent="center" alignItems="center" {...props}>
 			<Box textAlign="center">
 				<img src="/no-results-found.png" alt="No results found" width={400} />
 				<Typography variant="subtitle1" fontWeight={500}>
