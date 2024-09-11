@@ -245,7 +245,9 @@ export function MuseumsList() {
 							onSuccess={() =>
 								queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] })
 							}
-						/>
+						>
+							Ajouter un musée
+						</CreateVisitButton>
 					</Stack>
 				)}
 			</Stack>

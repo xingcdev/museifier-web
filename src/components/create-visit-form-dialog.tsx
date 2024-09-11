@@ -125,7 +125,7 @@ export function CreateVisitFormDialog({
 	return (
 		<Dialog {...props} onClose={handleClose}>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<DialogTitle>Create a visit</DialogTitle>
+				<DialogTitle>Ajouter un musée</DialogTitle>
 				<DialogContent
 					sx={{
 						width: '100vw',
