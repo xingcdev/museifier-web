@@ -15,10 +15,10 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { isErrorDto } from '../api/dtos/errorDto';
+import type { VisitDto } from '../api/dtos/visitDto';
 import { VisitErrorCode } from '../api/visit-error-code';
 import { createVisit } from '../api/visit/create-visit';
 import { Error } from './ui/errors/error';
-import type { VisitDto } from '../api/dtos/visitDto';
 
 const formSchema = z.object({
 	title: z
@@ -116,15 +116,10 @@ export function CreateMuseumVisitFormDialog({
 	}
 
 	return (
-		<Dialog {...props} onClose={handleClose}>
+		<Dialog {...props} onClose={handleClose} fullWidth maxWidth="sm">
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<DialogTitle textTransform="capitalize">{museumName}</DialogTitle>
-				<DialogContent
-					sx={{
-						width: '100vw',
-						maxWidth: 500,
-					}}
-				>
+				<DialogContent>
 					<Stack spacing={2} pt={2}>
 						<TextField
 							error={!!formErrors.title}
