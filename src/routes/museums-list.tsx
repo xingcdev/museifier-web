@@ -241,7 +241,11 @@ export function MuseumsList() {
 							numberOfFilters={numberOfFilters}
 						/>
 
-						<CreateVisitButton />
+						<CreateVisitButton
+							onSuccess={() =>
+								queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] })
+							}
+						/>
 					</Stack>
 				)}
 			</Stack>
@@ -336,19 +340,23 @@ export function MuseumsList() {
 						</Box>
 					</Box>
 
-					<MuseumListVisits
-						visits={selectedMuseum?.visits || []}
-						sx={{
-							flexBasis: 0,
-							flexGrow: 1,
-							ml: 3,
-							p: 2,
-							position: 'sticky',
-							height: '93vh',
-							overflow: 'auto',
-							top: 12,
-						}}
-					/>
+					{selectedMuseum && (
+						<MuseumListVisits
+							museumId={selectedMuseum.id}
+							museumName={selectedMuseum.name}
+							visits={selectedMuseum.visits}
+							sx={{
+								flexBasis: 0,
+								flexGrow: 1,
+								ml: 3,
+								p: 2,
+								position: 'sticky',
+								height: '93vh',
+								overflow: 'auto',
+								top: 12,
+							}}
+						/>
+					)}
 				</Box>
 			) : searchQueryParam || isFiltering ? (
 				<NoSearchResultsFound>

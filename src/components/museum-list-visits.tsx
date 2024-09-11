@@ -1,4 +1,7 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card, { type CardProps } from '@mui/material/Card';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Rating from '@mui/material/Rating';
@@ -8,10 +11,13 @@ import Typography from '@mui/material/Typography';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { CreateMuseumVisitFormDialog } from './create-museum-visit-form-dialog';
 import { DeleteVisitButton } from './delete-visit-button';
 import { UpdateVisitButton } from './update-visit-button';
 
 interface MuseumListVisitsProps extends CardProps {
+	museumId: string;
+	museumName: string;
 	visits: {
 		id: string;
 		title: string;
@@ -23,9 +29,15 @@ interface MuseumListVisitsProps extends CardProps {
 	}[];
 }
 
-export function MuseumListVisits({ visits, ...props }: MuseumListVisitsProps) {
+export function MuseumListVisits({
+	visits,
+	museumId,
+	museumName,
+	...props
+}: MuseumListVisitsProps) {
 	const [editMode, setEditMode] = useState(false);
 	const queryClient = useQueryClient();
+	const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
 	return (
 		<Card {...props} variant="outlined">
@@ -136,6 +148,27 @@ export function MuseumListVisits({ visits, ...props }: MuseumListVisitsProps) {
 					</Card>
 				))}
 			</Stack>
+			<Box display="flex" justifyContent="center" alignItems="center" py={2}>
+				<Button
+					variant="contained"
+					size="small"
+					startIcon={<AddCircleOutlineIcon />}
+					onClick={() => setOpenCreateDialog(true)}
+				>
+					Créer
+				</Button>
+			</Box>
+			{openCreateDialog && (
+				<CreateMuseumVisitFormDialog
+					museumId={museumId}
+					museumName={museumName}
+					open={openCreateDialog}
+					onClose={() => setOpenCreateDialog(false)}
+					onSuccess={() =>
+						queryClient.invalidateQueries({ queryKey: ['visitedMuseums'] })
+					}
+				/>
+			)}
 		</Card>
 	);
 }
