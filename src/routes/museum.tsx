@@ -42,22 +42,26 @@ export function Museum() {
 				>
 					{data.name}
 				</Typography>
+
 				<Box>
 					<Typography>{data.address}</Typography>
 					<Typography gutterBottom>
 						{data.postalCode} {data.city}
 					</Typography>
 				</Box>
-				<Box display="flex" alignItems="center">
-					<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
-					<Typography>{data.phoneNumber}</Typography>
-				</Box>
-				{data.url && (
+				<Stack spacing={0.5}>
 					<Box display="flex" alignItems="center">
-						<LanguageIcon fontSize="small" sx={{ mr: 1 }} />
-						<Link href={data.url}>{StringUtils.truncate(data.url, 60)}</Link>
+						<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
+						<Typography>{data.phoneNumber}</Typography>
 					</Box>
-				)}
+
+					{data.url && (
+						<Box display="flex" alignItems="center">
+							<LanguageIcon fontSize="small" sx={{ mr: 1 }} />
+							<Link href={data.url}>{StringUtils.truncate(data.url, 60)}</Link>
+						</Box>
+					)}
+				</Stack>
 			</Stack>
 
 			<Box py={4}>
