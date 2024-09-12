@@ -60,7 +60,7 @@ export function VisitFilter(props: VisitFilterProps) {
 		>
 			<TextField
 				name="city"
-				label="City"
+				label="Ville"
 				size="small"
 				sx={{ flexGrow: 1 }}
 				value={city}
@@ -68,7 +68,7 @@ export function VisitFilter(props: VisitFilterProps) {
 			/>
 			<TextField
 				name="postalCode"
-				label="Postal code"
+				label="Code postal"
 				size="small"
 				sx={{ flexGrow: 1 }}
 				value={postalCode}
@@ -76,7 +76,7 @@ export function VisitFilter(props: VisitFilterProps) {
 			/>
 			<TextField
 				name="department"
-				label="Department"
+				label="Département"
 				size="small"
 				sx={{ flexGrow: 1 }}
 				value={department}

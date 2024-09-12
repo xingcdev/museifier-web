@@ -7,7 +7,7 @@ export interface ApiErrorAlertProps extends BoxProps {
 }
 
 export function Error({
-	text = 'Something is wrong, please try again.',
+	text = 'Il y a un problème, veuillez réessayer.',
 	...props
 }: ApiErrorAlertProps) {
 	return (

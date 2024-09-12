@@ -122,7 +122,7 @@ export function AppHeader() {
 					</Stack>
 
 					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Open settings">
+						<Tooltip title="Ouvrir le profil">
 							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 								<Avatar
 									alt="default avatar"
@@ -156,7 +156,7 @@ export function AppHeader() {
 								<ListItemIcon>
 									<LogoutIcon fontSize="small" />
 								</ListItemIcon>
-								Log out
+								Se déconnecter
 							</MenuItem>
 						</Menu>
 					</Box>

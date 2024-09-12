@@ -17,7 +17,7 @@ export function SomethingIsWrong(props: BoxProps) {
 					width={400}
 				/>
 				<Typography variant="subtitle1" fontWeight={500}>
-					Something is wrong, please try again.
+					Il y a un problème, veuillez réessayer.
 				</Typography>
 			</Box>
 		</Box>

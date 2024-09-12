@@ -52,7 +52,7 @@ export function MuseumListVisits({
 					<Typography component="span" fontWeight={500}>
 						{visits.length}
 					</Typography>{' '}
-					total {visits.length > 1 ? 'visits' : 'visit'}
+					{visits.length > 1 ? 'visites' : 'visite'} au total
 				</Typography>
 				<FormControlLabel
 					control={
@@ -62,7 +62,7 @@ export function MuseumListVisits({
 							onChange={(e) => setEditMode(e.target.checked)}
 						/>
 					}
-					label="Edit mode"
+					label="Mode édition"
 					slotProps={{
 						typography: {
 							fontWeight: 500,
@@ -126,10 +126,10 @@ export function MuseumListVisits({
 						<Typography mb={2}>{visit.comment}</Typography>
 						<Typography mb={1}>
 							<Typography fontWeight={500} component="span">
-								Date of experience:{' '}
+								Date de l'expérience :{' '}
 							</Typography>
 							<Typography component="span">
-								{dayjs(visit.visitDate).format('MMMM DD, YYYY')}
+								{dayjs(visit.visitDate).format('DD MMMM YYYY')}
 							</Typography>
 						</Typography>
 
@@ -138,7 +138,7 @@ export function MuseumListVisits({
 							<Stack direction="row" spacing={0.5} alignItems="center">
 								<EditNoteIcon fontSize="medium" color="action" />
 								<Typography variant="body2" color="text.secondary">
-									Last edited{' '}
+									Dernière modification{' '}
 									{dayjs().diff(dayjs(visit.updated), 'day') > 7
 										? dayjs(visit.updated).format('MMMM DD, YYYY')
 										: dayjs(visit.updated).fromNow()}

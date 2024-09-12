@@ -35,7 +35,7 @@ export function DeleteConfirmDialog(props: ConfirmationDialogProps) {
 			<DialogContent>{children}</DialogContent>
 			<DialogActions>
 				<Button onClick={handleCancel} variant="text">
-					Cancel
+					Annuler
 				</Button>
 				<LoadingButton
 					onClick={onDelete}
@@ -43,7 +43,7 @@ export function DeleteConfirmDialog(props: ConfirmationDialogProps) {
 					variant="contained"
 					color="error"
 				>
-					Delete
+					Supprimer
 				</LoadingButton>
 			</DialogActions>
 		</Dialog>

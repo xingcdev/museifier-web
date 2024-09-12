@@ -4,9 +4,9 @@ import type { ButtonProps } from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import type { VisitDto } from '../api/dtos/visitDto';
 import { deleteVisit } from '../api/visit/delete-visit';
 import { DeleteConfirmDialog } from './ui/delete-confirm-dialog';
-import type { VisitDto } from '../api/dtos/visitDto';
 
 export interface DeleteVisitButtonProps extends ButtonProps {
 	id: string;
@@ -44,13 +44,13 @@ export function DeleteVisitButton({
 				<DeleteIcon fontSize={props.size} />
 			</IconButton>
 			<DeleteConfirmDialog
-				title="Are you sure?"
+				title="Êtes-vous sûr ?"
 				open={openDialog}
 				onClose={() => setOpenDialog(false)}
 				onDelete={handleClick}
 			>
 				<Typography>
-					Are you sure to delete your visit <b>{visitName}</b>
+					Êtes-vous sûr de supprimer votre visite <b>{visitName}</b>
 				</Typography>
 			</DeleteConfirmDialog>
 		</>

@@ -66,12 +66,12 @@ export const MuseumAutocomplete = forwardRef(
 						{...params}
 						error={error}
 						helperText={helperText}
-						label="Museum"
+						label="Musée"
 						InputProps={{
 							...params.InputProps,
 							endAdornment: (
 								<>
-									{isPending ? (
+									{searchTerm.length > 3 && isPending ? (
 										<CircularProgress color="inherit" size={20} />
 									) : null}
 									{params.InputProps.endAdornment}

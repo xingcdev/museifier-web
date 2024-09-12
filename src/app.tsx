@@ -7,6 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import dayjs from 'dayjs';
+import 'dayjs/locale/fr';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { forwardRef } from 'react';
 import {
@@ -17,6 +18,7 @@ import {
 import { AuthProvider } from './context/auth-provider';
 import { router } from './router';
 
+dayjs.locale('fr');
 dayjs.extend(relativeTime);
 
 const queryClient = new QueryClient({

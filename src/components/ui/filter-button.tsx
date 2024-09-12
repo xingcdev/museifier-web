@@ -38,7 +38,7 @@ export function FilterButton({ numberOfFilters, ...props }: FilterButtonProps) {
 				},
 			}}
 		>
-			Filter
+			Filtrer
 		</Button>
 	);
 }

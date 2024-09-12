@@ -235,7 +235,7 @@ export function MuseumsList() {
 							pb={2}
 						>
 							<Stack direction="row" alignItems="center">
-								<Typography mr={1}>Sort by:</Typography>
+								<Typography mr={1}>Trier par :</Typography>
 								<Select
 									value={sortField || 'name'}
 									onChange={handleSortField}
@@ -247,8 +247,8 @@ export function MuseumsList() {
 										textAlign: 'center',
 									}}
 								>
-									<MenuItem value="name">Name</MenuItem>
-									<MenuItem value="city">City</MenuItem>
+									<MenuItem value="name">Nom</MenuItem>
+									<MenuItem value="city">Ville</MenuItem>
 								</Select>
 								<IconButton
 									aria-label="sort"
@@ -266,7 +266,7 @@ export function MuseumsList() {
 								<Typography component="span" fontWeight={500}>
 									{data.pageInfo.totalResults}
 								</Typography>{' '}
-								{data.pageInfo.totalResults > 1 ? 'results' : 'result'}
+								{data.pageInfo.totalResults > 1 ? 'résultats' : 'résultat'}
 							</Typography>
 						</Stack>
 						<Stack
@@ -333,7 +333,7 @@ export function MuseumsList() {
 					)}
 				</Box>
 			) : searchQueryParam || isFiltering ? (
-				<NoSearchResultsFound>
+				<NoSearchResultsFound py={15}>
 					Aucun résultat n'a été trouvé, veuillez essayer d'autres mots-clés.
 				</NoSearchResultsFound>
 			) : (

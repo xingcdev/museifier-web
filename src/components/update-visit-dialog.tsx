@@ -20,8 +20,8 @@ import { Error } from './ui/errors/error';
 const formSchema = z.object({
 	title: z
 		.string()
-		.min(2, 'The title must be between 2 and 50 characters long.')
-		.max(50, 'The title must be between 2 and 50 characters long.'),
+		.min(2, 'Le titre doit comporter entre 2 et 50 caractères.')
+		.max(50, 'Le titre doit comporter entre 2 et 50 caractères.'),
 	comment: z
 		.string()
 		.min(2, 'The comment must contain at least 2 characters')
@@ -89,10 +89,10 @@ export function UpdateVisitDialog({
 					if (isErrorDto(error)) {
 						if (error.code === VisitErrorCode.VISIT_NOT_FOUND) {
 							setError(
-								`The visit you provided doesn't exist, please try again.`
+								`La visite que vous avez fournie n'existe pas, veuillez réessayer.`
 							);
 						} else {
-							setError('Something is wrong, please try again.');
+							setError('Il y a un problème, veuillez réessayer.');
 						}
 					}
 				},
@@ -103,7 +103,7 @@ export function UpdateVisitDialog({
 	return (
 		<Dialog {...props} onClose={handleClose}>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<DialogTitle>Update a visit</DialogTitle>
+				<DialogTitle>Modifier une visite</DialogTitle>
 				<DialogContent
 					sx={{
 						width: '100vw',
@@ -114,7 +114,7 @@ export function UpdateVisitDialog({
 						<TextField
 							error={!!formErrors.title}
 							helperText={formErrors.title?.message}
-							label="Title"
+							label="Titre"
 							fullWidth
 							sx={{
 								'.MuiInputBase-input': {
@@ -127,7 +127,7 @@ export function UpdateVisitDialog({
 						<TextField
 							error={!!formErrors.comment}
 							helperText={formErrors.comment?.message}
-							label="Comment"
+							label="Commentaire"
 							multiline
 							fullWidth
 							rows={4}
@@ -146,7 +146,7 @@ export function UpdateVisitDialog({
 							}
 						}}
 					>
-						Cancel
+						Annuler
 					</Button>
 					<LoadingButton
 						loading={isPending}
@@ -154,7 +154,7 @@ export function UpdateVisitDialog({
 						type="submit"
 						disabled={!isDirty}
 					>
-						Update
+						Modifier
 					</LoadingButton>
 				</DialogActions>
 			</form>

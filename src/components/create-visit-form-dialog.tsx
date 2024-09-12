@@ -24,23 +24,24 @@ import { Error } from './ui/errors/error';
 const formSchema = z.object({
 	title: z
 		.string()
-		.min(2, 'The title must be between 2 and 50 characters long.')
-		.max(50, 'The title must be between 2 and 50 characters long.'),
+		// The title must be between 2 and 50 characters long.
+		.min(2, 'Le titre doit comporter entre 2 et 50 caractères.')
+		.max(50, 'Le titre doit comporter entre 2 et 50 caractères.'),
 	visitDate: z.instanceof(dayjs as unknown as typeof Dayjs),
 	rating: z
 		.number()
-		.min(1, 'A rating must be between 1 and 5.')
-		.max(5, 'A rating must be between 1 and 5.'),
+		.min(1, 'La note doit être comprise entre 1 et 5.')
+		.max(5, 'La note doit être comprise entre 1 et 5.'),
 	comment: z
 		.string()
-		.min(2, 'The comment must contain at least 2 characters')
+		.min(2, 'Le commentaire doit contenir au moins 2 caractères')
 		.max(255),
 	museum: z.object(
 		{
 			id: z.string(),
 			label: z.string(),
 		},
-		{ message: 'Please select a valid museum' }
+		{ message: 'Veuillez sélectionner un musée valide' }
 	),
 });
 
@@ -109,11 +110,11 @@ export function CreateVisitFormDialog({
 					if (props.onClose) props.onClose({}, 'escapeKeyDown');
 				},
 				onError: (error) => {
-					setError('Something is wrong, please try again.');
+					setError('Il y a un problème, veuillez réessayer.');
 					if (isErrorDto(error)) {
 						if (error.code === VisitErrorCode.MUSEUM_ALREADY_VISITED) {
 							setError(
-								`The museum is already visited on ${values.visitDate.toString()}, please select another museum.`
+								`Le musée est déjà visité le ${values.visitDate.toString()}, veuillez sélectionner un autre musée.`
 							);
 						}
 					}
@@ -136,7 +137,7 @@ export function CreateVisitFormDialog({
 						<TextField
 							error={!!formErrors.title}
 							helperText={formErrors.title?.message}
-							label="Title"
+							label="Titre"
 							fullWidth
 							sx={{
 								'.MuiInputBase-input': {
@@ -160,7 +161,7 @@ export function CreateVisitFormDialog({
 						<TextField
 							error={!!formErrors.comment}
 							helperText={formErrors.comment?.message}
-							label="Comment"
+							label="Commentaire"
 							multiline
 							fullWidth
 							rows={4}
@@ -174,7 +175,7 @@ export function CreateVisitFormDialog({
 								<DatePicker
 									{...field}
 									disableFuture
-									label="Visit date"
+									label="Date de visite"
 									slotProps={{
 										textField: {
 											helperText: formErrors.visitDate?.message,
@@ -209,10 +210,10 @@ export function CreateVisitFormDialog({
 							}
 						}}
 					>
-						Cancel
+						Annuler
 					</Button>
 					<LoadingButton loading={isPending} variant="contained" type="submit">
-						Create
+						Créer
 					</LoadingButton>
 				</DialogActions>
 			</form>
