@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AuthCallback } from './components/auth-callback';
+import NotFoundPage from './components/ui/errors/not-found-page';
 import Layout from './routes/layout';
 import { Museum } from './routes/museum';
 import { MuseumMap } from './routes/museum-map';
@@ -9,6 +10,7 @@ export const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <Layout />,
+		errorElement: <NotFoundPage />,
 		children: [
 			{
 				path: '',
