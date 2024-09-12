@@ -30,14 +30,20 @@ import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-res
 
 const PARIS_LOCATION: LatLngTuple = [48.8566, 2.3522];
 
-const createMarkerIcon = (number: number, color: string): DivIcon => {
-	const badgeClass = number ? 'museum-map-marker__badge' : 'hidden';
-
+const createMarkerIcon = (
+	number: number,
+	color: string,
+	rating: number
+): DivIcon => {
+	const ratingClass = number ? 'museum-map-marker__rating' : 'hidden';
 	return L.divIcon({
 		html: `
       <div class="museum-map-marker">
 	  <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 0 24 24" width="48px" fill=${color}><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        <div class=${badgeClass}>${number}</div>
+		<div class=${ratingClass}>
+			<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#faaf00"><g><path d="M0 0h24v24H0V0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/></g><g><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z"/></g></svg>
+			<p>${rating} / 5</p>
+		</div>
       </div>
     `,
 		className: '', // Ensure no default Leaflet styles are applied
@@ -287,12 +293,14 @@ export function MuseumMap() {
 						? data.data.map((museum, index) => {
 								const defaultMarkerIcon = createMarkerIcon(
 									museum.totalVisits,
-									theme.palette.primary.main
+									theme.palette.primary.main,
+									museum.averageRating
 								);
 
 								const highlightedMarkerIcon = createMarkerIcon(
 									museum.totalVisits,
-									theme.palette.secondary.main
+									theme.palette.secondary.main,
+									museum.averageRating
 								);
 
 								return (
