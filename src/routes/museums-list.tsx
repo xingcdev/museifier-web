@@ -29,6 +29,7 @@ import {
 import { CreateVisitButton } from '../components/create-visit-button';
 import { MuseumCard } from '../components/museum-card';
 import { MuseumListVisits } from '../components/museum-list-visits';
+import { SomethingIsWrong } from '../components/ui/errors/something-is-wrong';
 import { FilterButton } from '../components/ui/filter-button';
 import { Page } from '../components/ui/page';
 import { NoSearchResultsFound } from '../components/ui/placeholder/no-search-results-found';
@@ -76,7 +77,7 @@ export function MuseumsList() {
 		department: departmentParam || undefined,
 	};
 
-	const { isPending, isError, error, data } = useQuery({
+	const { isPending, isError, data } = useQuery({
 		queryKey: ['visitedMuseums', getVisitedMuseumsParams],
 		queryFn: async () => {
 			const data = await getVisitedMuseums(getVisitedMuseumsParams);
@@ -213,7 +214,7 @@ export function MuseumsList() {
 	}
 
 	if (isError) {
-		return <div>{error.message}</div>;
+		return <SomethingIsWrong py={30} />;
 	}
 
 	return (
@@ -384,16 +385,63 @@ export function MuseumsList() {
 
 function SkeletonScreen() {
 	return (
-		<>
-			<Skeleton height={50} variant="rectangular" sx={{ mb: 4 }} />
-			{[1, 2, 3, 4].map((value) => (
+		<Page>
+			<Stack
+				justifyContent="space-between"
+				alignItems="center"
+				direction="row"
+				pb={3}
+			>
+				<Skeleton variant="text" sx={{ fontSize: '1.5rem', width: 230 }} />
+				<Stack direction="row" spacing={2}>
+					<Skeleton width={164} height={39} variant="rectangular" />
+					<Skeleton width={100} height={39} variant="rectangular" />
+					<Skeleton width={174} height={39} variant="rectangular" />
+				</Stack>
+			</Stack>
+
+			<Box display="flex">
+				<Box>
+					<Stack
+						direction="row"
+						justifyContent="space-between"
+						alignItems="center"
+						pb={2}
+					>
+						<Stack direction="row" alignItems="center" spacing={1}>
+							<Skeleton width={55} sx={{ fontSize: '1rem' }} />
+							<Skeleton variant="rectangular" width={90} height={40} />
+							<Skeleton variant="rectangular" width={24} height={24} />
+						</Stack>
+						<Skeleton width={62} sx={{ fontSize: '1rem' }} />
+					</Stack>
+					<Stack
+						spacing={2}
+						sx={{
+							flexBasis: 417,
+						}}
+					>
+						{[1, 2, 3, 4].map((value) => (
+							<Skeleton
+								key={value}
+								variant="rectangular"
+								width={390}
+								height={157}
+							/>
+						))}
+					</Stack>
+					<Box display="flex" justifyContent="center" py={2}>
+						<Skeleton variant="rectangular" width={114} height={32} />
+					</Box>
+				</Box>
+
 				<Skeleton
-					key={value}
 					variant="rectangular"
-					height={140}
-					sx={{ mb: 5 }}
+					width={738}
+					height={780}
+					sx={{ ml: 3 }}
 				/>
-			))}
-		</>
+			</Box>
+		</Page>
 	);
 }

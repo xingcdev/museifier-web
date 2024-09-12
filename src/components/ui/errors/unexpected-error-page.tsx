@@ -14,10 +14,13 @@ export default function UnexpectedErrorPage() {
 			}}
 		>
 			<Box>
+				<img src="/unexpected-error.png" alt="Unexpected error" width={400} />
 				<Typography variant="h4" component="h1" gutterBottom>
 					Oops!
 				</Typography>
-				<Typography mb={4}>Sorry, an unexpected error has occurred.</Typography>
+				<Typography fontWeight={500} mb={2}>
+					Sorry, an unexpected error has occurred.
+				</Typography>
 				<Link href="/">Go back to home</Link>
 			</Box>
 		</Page>

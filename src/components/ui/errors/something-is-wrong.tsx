@@ -4,11 +4,11 @@ import Typography from '@mui/material/Typography';
 export function SomethingIsWrong(props: BoxProps) {
 	return (
 		<Box
-			{...props}
 			display="flex"
 			justifyContent="center"
 			alignItems="center"
 			py={10}
+			{...props}
 		>
 			<Box textAlign="center">
 				<img
