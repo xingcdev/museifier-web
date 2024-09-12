@@ -6,7 +6,7 @@ export interface VisitedMuseumDto {
 	city: string;
 	department: string;
 	phoneNumber: string;
-	url: string;
+	url: string | null;
 	latitude: number;
 	longitude: number;
 	visits: VisitedMuseumVisitsDto[];

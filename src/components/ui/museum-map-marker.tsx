@@ -62,12 +62,15 @@ export const MuseumMapMarker = forwardRef(
 						</Typography>
 
 						<Typography>
-							{museum.address} {museum.postalCode} {museum.city}
+							{museum.address} {museum.postalCode} {museum.city},{' '}
+							{museum.department}
 						</Typography>
-						<Box display="flex" alignItems="center">
-							<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
-							<Typography>{museum.phoneNumber}</Typography>
-						</Box>
+						{museum.phoneNumber && (
+							<Box display="flex" alignItems="center">
+								<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
+								<Typography>{museum.phoneNumber}</Typography>
+							</Box>
+						)}
 
 						{museum.url && (
 							<Box display="flex" alignItems="center">

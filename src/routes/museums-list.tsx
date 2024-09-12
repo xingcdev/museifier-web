@@ -288,6 +288,8 @@ export function MuseumsList() {
 										address={museum.address}
 										postalCode={museum.postalCode}
 										city={museum.city}
+										department={museum.department}
+										phoneNumber={museum.phoneNumber}
 										url={museum.url}
 										sx={{
 											width: 390,

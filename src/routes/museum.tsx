@@ -45,15 +45,18 @@ export function Museum() {
 
 				<Box>
 					<Typography>{data.address}</Typography>
-					<Typography gutterBottom>
+					<Typography>
 						{data.postalCode} {data.city}
 					</Typography>
+					<Typography gutterBottom>{data.department}</Typography>
 				</Box>
 				<Stack spacing={0.5}>
-					<Box display="flex" alignItems="center">
-						<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
-						<Typography>{data.phoneNumber}</Typography>
-					</Box>
+					{data.phoneNumber && (
+						<Box display="flex" alignItems="center">
+							<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
+							<Typography>{data.phoneNumber}</Typography>
+						</Box>
+					)}
 
 					{data.url && (
 						<Box display="flex" alignItems="center">

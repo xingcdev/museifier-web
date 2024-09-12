@@ -1,3 +1,5 @@
+import LanguageIcon from '@mui/icons-material/Language';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import Box from '@mui/material/Box';
 import Card, { type CardProps } from '@mui/material/Card';
 import Link from '@mui/material/Link';
@@ -9,7 +11,9 @@ export interface NearbyMuseumCardProps extends CardProps {
 	address: string;
 	postalCode: string;
 	city: string;
-	url: string;
+	department: string;
+	phoneNumber: string;
+	url: string | null;
 	totalVisits: number;
 	distance: number;
 }
@@ -19,9 +23,12 @@ export function NearbyMuseumCard({
 	address,
 	postalCode,
 	city,
+	department,
+	phoneNumber,
 	url,
 	totalVisits,
 	distance,
+
 	...props
 }: NearbyMuseumCardProps) {
 	return (
@@ -36,12 +43,24 @@ export function NearbyMuseumCard({
 					{name}
 				</Typography>
 				<Typography>{address}</Typography>
-				<Typography gutterBottom>
+				<Typography>
 					{postalCode} {city}
 				</Typography>
-				<Link color="text.secondary" href={url}>
-					{StringUtils.truncate(url, 60)}
-				</Link>
+				<Typography gutterBottom>{department}</Typography>
+
+				{phoneNumber && (
+					<Box display="flex" alignItems="center">
+						<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
+						<Typography>{phoneNumber}</Typography>
+					</Box>
+				)}
+
+				{url && (
+					<Box display="flex" alignItems="center">
+						<LanguageIcon fontSize="small" sx={{ mr: 1 }} />
+						<Link href={url}>{StringUtils.truncate(url, 60)}</Link>
+					</Box>
+				)}
 			</Box>
 			<Box flexShrink={0} flexBasis={55} ml={3}>
 				<Typography variant="body2">{distance} km</Typography>

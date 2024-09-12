@@ -240,6 +240,8 @@ export function MuseumMap() {
 											address={museum.address}
 											postalCode={museum.postalCode}
 											city={museum.city}
+											department={museum.department}
+											phoneNumber={museum.phoneNumber}
 											url={museum.url || ''}
 											totalVisits={museum.totalVisits}
 											distance={museum.distance}
