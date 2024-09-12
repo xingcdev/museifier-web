@@ -5,7 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
-import { forwardRef, useEffect, useState, type SyntheticEvent } from 'react';
+import { forwardRef, useState } from 'react';
 import { getMuseums, type GetMuseumsParams } from '../api/museum/get-museums';
 
 export interface MuseumAutocompleteProps
@@ -31,7 +31,6 @@ export const MuseumAutocomplete = forwardRef(
 		ref: React.Ref<HTMLDivElement>
 	) => {
 		const [searchTerm, setSearchTerm] = useState('');
-		const [inputValue, setInputValue] = useState('');
 		const debouncedSearchTerm = useDebounce(searchTerm, 1000);
 		const getMuseumsParams: GetMuseumsParams = {
 			page: 1,
@@ -39,45 +38,26 @@ export const MuseumAutocomplete = forwardRef(
 			q: debouncedSearchTerm,
 		};
 
-		const [fetchQuery, setFetchQuery] = useState(true);
-
-		const { data, isFetching } = useQuery({
+		const { data, isPending } = useQuery({
 			queryFn: () => getMuseums(getMuseumsParams),
 			queryKey: ['museums', getMuseumsParams],
-			enabled: fetchQuery,
+			enabled: debouncedSearchTerm.length >= 3,
+			select: (data) =>
+				data?.data.map((museum) => ({
+					id: museum.id,
+					label: museum.name,
+				})),
 		});
-
-		function handleInputChange(
-			_: SyntheticEvent<Element, Event>,
-			newValue: string
-		) {
-			setSearchTerm(newValue);
-			setInputValue(newValue);
-		}
-
-		// Don't fetch the list of museum when we select an option
-		useEffect(() => {
-			setFetchQuery(!(props.value?.label === inputValue));
-		}, [props.value?.label, inputValue]);
-
-		const options =
-			data?.data.map((museum) => ({
-				id: museum.id,
-				label: museum.name,
-			})) || [];
 
 		return (
 			<Autocomplete
 				{...props}
 				ref={ref}
 				id="museum-autocomplete"
-				onOpen={() => {
-					setSearchTerm('');
-				}}
-				inputValue={inputValue}
-				onInputChange={handleInputChange}
-				options={options}
-				loading={isFetching}
+				inputValue={searchTerm}
+				onInputChange={(_, newValue) => setSearchTerm(newValue)}
+				options={data || []}
+				loading={searchTerm.length > 3 && isPending}
 				isOptionEqualToValue={(option, value) => option.label === value.label}
 				// Disable the built-in filtering
 				filterOptions={(x) => x}
@@ -91,7 +71,7 @@ export const MuseumAutocomplete = forwardRef(
 							...params.InputProps,
 							endAdornment: (
 								<>
-									{isFetching ? (
+									{isPending ? (
 										<CircularProgress color="inherit" size={20} />
 									) : null}
 									{params.InputProps.endAdornment}
