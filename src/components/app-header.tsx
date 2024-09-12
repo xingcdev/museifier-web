@@ -127,7 +127,7 @@ export function AppHeader() {
 								<Avatar
 									alt="default avatar"
 									src="/avatar.png"
-									sx={{ bgcolor: 'grey.300', width: 48, height: 48 }}
+									sx={{ bgcolor: 'grey.200', width: 48, height: 48 }}
 								/>
 							</IconButton>
 						</Tooltip>
