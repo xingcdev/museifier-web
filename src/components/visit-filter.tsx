@@ -1,51 +1,94 @@
 import type { BoxProps } from '@mui/material/Box';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import type { ChangeEvent } from 'react';
+import { useState, type FormEventHandler } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-interface VisitFilterProps extends BoxProps {
-	handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}
+type VisitFilterProps = BoxProps<'form'>;
 
-export function VisitFilter({ handleChange, ...props }: VisitFilterProps) {
+export function VisitFilter(props: VisitFilterProps) {
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [city, setCity] = useState('');
+	const [postalCode, setPostalCode] = useState('');
+	const [department, setDepartment] = useState('');
 
 	function resetSearchParams() {
 		searchParams.delete('city');
 		searchParams.delete('postalCode');
 		searchParams.delete('department');
+		setCity('');
+		setPostalCode('');
+		setDepartment('');
 		setSearchParams(searchParams);
 	}
 
+	const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+		e.preventDefault();
+
+		if (city) {
+			searchParams.set('city', city);
+		} else {
+			searchParams.delete('city');
+		}
+
+		if (postalCode) {
+			searchParams.set('postalCode', postalCode);
+		} else {
+			searchParams.delete('postalCode');
+		}
+
+		if (department) {
+			searchParams.set('department', department);
+		} else {
+			searchParams.delete('department');
+		}
+
+		setSearchParams(searchParams);
+	};
+
 	return (
-		<Box {...props} display="flex" flexDirection="row" pb={4} gap={3}>
+		<Box
+			{...props}
+			display="flex"
+			flexDirection="row"
+			pb={4}
+			gap={3}
+			component="form"
+			onSubmit={handleSubmit}
+		>
 			<TextField
 				name="city"
 				label="City"
 				size="small"
 				sx={{ flexGrow: 1 }}
-				value={searchParams.get('city') || ''}
-				onChange={handleChange}
+				value={city}
+				onChange={(e) => setCity(e.target.value)}
 			/>
 			<TextField
 				name="postalCode"
 				label="Postal code"
 				size="small"
 				sx={{ flexGrow: 1 }}
-				value={searchParams.get('postalCode') || ''}
-				onChange={handleChange}
+				value={postalCode}
+				onChange={(e) => setPostalCode(e.target.value)}
 			/>
 			<TextField
 				name="department"
 				label="Department"
 				size="small"
 				sx={{ flexGrow: 1 }}
-				value={searchParams.get('department') || ''}
-				onChange={handleChange}
+				value={department}
+				onChange={(e) => setDepartment(e.target.value)}
 			/>
-			<Button onClick={resetSearchParams}>Clear</Button>
+
+			<Stack direction="row">
+				<Button type="submit">Valider</Button>
+				<Button onClick={resetSearchParams} color="info">
+					Réinitialiser
+				</Button>
+			</Stack>
 		</Box>
 	);
 }

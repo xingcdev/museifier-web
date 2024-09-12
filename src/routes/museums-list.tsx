@@ -14,13 +14,7 @@ import {
 	useQuery,
 	useQueryClient,
 } from '@tanstack/react-query';
-import {
-	useEffect,
-	useMemo,
-	useState,
-	type ChangeEvent,
-	type FormEventHandler,
-} from 'react';
+import { useEffect, useMemo, useState, type FormEventHandler } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
 	getVisitedMuseums,
@@ -160,31 +154,6 @@ export function MuseumsList() {
 
 	// ====== Filtering ======
 
-	function handleFilter(e: ChangeEvent<HTMLInputElement>) {
-		const inputName = e.target.name;
-
-		if (inputName === 'city') {
-			if (e.target.value) {
-				searchParams.set('city', e.target.value);
-			} else {
-				searchParams.delete('city');
-			}
-		} else if (inputName === 'postalCode') {
-			if (e.target.value) {
-				searchParams.set('postalCode', e.target.value);
-			} else {
-				searchParams.delete('postalCode');
-			}
-		} else if (inputName === 'department') {
-			if (e.target.value) {
-				searchParams.set('department', e.target.value);
-			} else {
-				searchParams.delete('department');
-			}
-		}
-		setSearchParams(searchParams);
-	}
-
 	useEffect(() => {
 		function computeFilterQuantity() {
 			let number = 0;
@@ -253,7 +222,7 @@ export function MuseumsList() {
 				)}
 			</Stack>
 			<Collapse in={openFilter}>
-				<VisitFilter handleChange={handleFilter} />
+				<VisitFilter />
 			</Collapse>
 
 			{data.data.length > 0 ? (
