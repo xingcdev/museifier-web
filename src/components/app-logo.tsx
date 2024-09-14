@@ -18,9 +18,10 @@ export function AppLogo(props: StackProps) {
 					letterSpacing: '.3rem',
 					color: 'inherit',
 					textDecoration: 'none',
+					textTransform: 'uppercase',
 				}}
 			>
-				MUSEUM
+				Muséifier
 			</Typography>
 		</Stack>
 	);

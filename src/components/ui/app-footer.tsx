@@ -3,13 +3,13 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+import { Copyright } from './copyright';
 
 export function AppFooter() {
 	return (
 		<Box component="footer" p={3}>
 			<Container>
-				<Typography>© 2024 Xing Chen</Typography>
+				<Copyright />
 				<IconButton
 					aria-label="LinkedIn"
 					href="https://www.linkedin.com/in/xing-chen-28739319b/"
