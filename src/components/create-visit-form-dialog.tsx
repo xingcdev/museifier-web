@@ -78,7 +78,7 @@ export function CreateVisitFormDialog({
 	const [error, setError] = useState('');
 
 	function handleClose(
-		event: object,
+		_event: object,
 		reason: 'backdropClick' | 'escapeKeyDown'
 	) {
 		if (reason && reason == 'backdropClick') {
