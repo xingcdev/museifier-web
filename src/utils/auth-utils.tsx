@@ -15,11 +15,15 @@ export function getAccessTokenInCookie() {
 
 export function saveAccessTokenInCookie(token: string, expiredIn: number) {
 	const expireDate = new Date(new Date().getTime() + 1000 * expiredIn);
-	Cookies.set('access_token', token, { expires: expireDate, secure: true });
+	Cookies.set('access_token', token, {
+		expires: expireDate,
+		secure: true,
+		sameSite: 'Strict',
+	});
 }
 
 export function removeAccessTokenInCookie() {
-	Cookies.remove('access_token', { secure: true });
+	Cookies.remove('access_token', { secure: true, sameSite: 'Strict' });
 }
 
 export function getRefreshTokenInCookie() {
@@ -28,11 +32,15 @@ export function getRefreshTokenInCookie() {
 
 export function saveRefreshTokenInCookie(token: string, expiredIn: number) {
 	const expireDate = new Date(new Date().getTime() + 1000 * expiredIn);
-	Cookies.set('refresh_token', token, { expires: expireDate, secure: true });
+	Cookies.set('refresh_token', token, {
+		expires: expireDate,
+		secure: true,
+		sameSite: 'Strict',
+	});
 }
 
 export function removeRefreshTokenInCookie() {
-	Cookies.remove('refresh_token', { secure: true });
+	Cookies.remove('refresh_token', { secure: true, sameSite: 'Strict' });
 }
 
 // Id token is used for logout
@@ -42,9 +50,13 @@ export function getIdTokenInCookie() {
 
 export function saveIdTokenInCookie(token: string, expiredIn: number) {
 	const expireDate = new Date(new Date().getTime() + 1000 * expiredIn);
-	Cookies.set('id_token', token, { expires: expireDate, secure: true });
+	Cookies.set('id_token', token, {
+		expires: expireDate,
+		secure: true,
+		sameSite: 'Strict',
+	});
 }
 
 export function removeIdTokenInCookie() {
-	Cookies.remove('id_token', { secure: true });
+	Cookies.remove('id_token', { secure: true, sameSite: 'Strict' });
 }
