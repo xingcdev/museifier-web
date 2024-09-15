@@ -27,36 +27,29 @@ export function MuseumCard({
 	...props
 }: MuseumCardProps) {
 	return (
-		<Card
-			{...props}
-			variant="outlined"
-			sx={{ display: 'flex', p: 3, ...props.sx }}
-		>
-			<img src="/vite.svg" alt="museum" loading="lazy" />
-			<Box ml={2}>
-				<Typography fontWeight={500} textTransform="capitalize" gutterBottom>
-					{name}
-				</Typography>
-				<Typography>{address}</Typography>
-				<Typography>
-					{postalCode} {city}
-				</Typography>
-				<Typography gutterBottom>{department}</Typography>
+		<Card {...props} variant="outlined" sx={{ p: 3, ...props.sx }}>
+			<Typography fontWeight={500} textTransform="capitalize" gutterBottom>
+				{name}
+			</Typography>
+			<Typography>{address}</Typography>
+			<Typography>
+				{postalCode} {city}
+			</Typography>
+			<Typography gutterBottom>{department}</Typography>
 
-				{phoneNumber && (
-					<Box display="flex" alignItems="center">
-						<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
-						<Typography>{phoneNumber}</Typography>
-					</Box>
-				)}
+			{phoneNumber && (
+				<Box display="flex" alignItems="center">
+					<LocalPhoneIcon fontSize="small" sx={{ mr: 1 }} />
+					<Typography>{phoneNumber}</Typography>
+				</Box>
+			)}
 
-				{url && (
-					<Box display="flex" alignItems="center">
-						<LanguageIcon fontSize="small" sx={{ mr: 1 }} />
-						<Link href={url}>{StringUtils.truncate(url, 60)}</Link>
-					</Box>
-				)}
-			</Box>
+			{url && (
+				<Box display="flex" alignItems="center">
+					<LanguageIcon fontSize="small" sx={{ mr: 1 }} />
+					<Link href={url}>{StringUtils.truncate(url, 60)}</Link>
+				</Box>
+			)}
 		</Card>
 	);
 }

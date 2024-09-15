@@ -37,8 +37,7 @@ export function NearbyMuseumCard({
 			variant="outlined"
 			sx={{ display: 'flex', p: 3, ...props.sx }}
 		>
-			<img src="/vite.svg" alt="museum" loading="lazy" />
-			<Box ml={2} flexGrow={1}>
+			<Box flexGrow={1}>
 				<Typography fontWeight={500} textTransform="capitalize" gutterBottom>
 					{name}
 				</Typography>
