@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import Img from '../../../assets/not-found.png';
 import { AppHeader } from '../../app-header';
 import { AppFooter } from '../app-footer';
 import { Page } from '../page';
@@ -18,7 +19,7 @@ export default function NotFoundPage() {
 				}}
 			>
 				<Box>
-					<img src="/not-found.png" alt="Not found" width={400} />
+					<img src={Img} alt="Not found" width={400} />
 					<Typography variant="h3" component="h1">
 						404
 					</Typography>

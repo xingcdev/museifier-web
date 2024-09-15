@@ -1,5 +1,6 @@
 import Box, { type BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Img from '../../../assets/something-is-wrong.png';
 
 export function SomethingIsWrong(props: BoxProps) {
 	return (
@@ -11,11 +12,7 @@ export function SomethingIsWrong(props: BoxProps) {
 			{...props}
 		>
 			<Box textAlign="center">
-				<img
-					src="/something-is-wrong.png"
-					alt="Something is wrong"
-					width={400}
-				/>
+				<img src={Img} alt="Something is wrong" width={400} />
 				<Typography variant="subtitle1" fontWeight={500}>
 					Il y a un problème, veuillez réessayer.
 				</Typography>

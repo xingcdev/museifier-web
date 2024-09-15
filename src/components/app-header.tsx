@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 import { useMutation } from '@tanstack/react-query';
 import * as React from 'react';
 import { logout as logoutFn } from '../api/auth';
+import AvatarImg from '../assets/avatar.png';
 import { UseAuth } from '../hooks/useAuth';
 import { AppLogo } from './app-logo';
 
@@ -126,7 +127,7 @@ export function AppHeader() {
 							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 								<Avatar
 									alt="default avatar"
-									src="/avatar.png"
+									src={AvatarImg}
 									sx={{ bgcolor: 'grey.200', width: 48, height: 48 }}
 								/>
 							</IconButton>
