@@ -84,10 +84,13 @@ export async function logout() {
 	urlencoded.append('client_secret', clientSecret);
 	urlencoded.append('id_token_hint', idToken);
 
-	const response = await fetch(logoutUri + '?' + urlencoded.toString());
-
-	if (!response.ok) {
-		// Logout needs 'Id token'. If it is not present, go to the login page.
+	try {
+		const response = await fetch(logoutUri + '?' + urlencoded.toString());
+		if (!response.ok) {
+			// Logout needs 'Id token'. If it is not present, go to the login page.
+			redirectToLoginPage();
+		}
+	} catch {
 		redirectToLoginPage();
 	}
 
