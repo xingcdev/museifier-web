@@ -2,11 +2,10 @@ import { useMutation } from '@tanstack/react-query';
 import { jwtDecode } from 'jwt-decode';
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { getAccessToken } from '../api/auth';
+import { getAccessToken, logout } from '../api/auth';
 import { UseAuth } from '../hooks/useAuth';
 import type { JwtPayload } from '../types/oauth-types';
 import {
-	redirectToLoginPage,
 	saveAccessTokenInCookie,
 	saveIdTokenInCookie,
 	saveRefreshTokenInCookie,
@@ -73,7 +72,7 @@ export function AuthCallback() {
 							navigate('/');
 						},
 						onError: () => {
-							redirectToLoginPage();
+							logout();
 						},
 					}
 				);

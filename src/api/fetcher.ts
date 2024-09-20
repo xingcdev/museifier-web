@@ -1,11 +1,10 @@
 import {
 	getAccessTokenInCookie,
-	redirectToLoginPage,
 	saveAccessTokenInCookie,
 	saveIdTokenInCookie,
 	saveRefreshTokenInCookie,
 } from '../utils/auth-utils';
-import { refreshAccessToken } from './auth';
+import { logout, refreshAccessToken } from './auth';
 import { ErrorDto } from './dtos/errorDto';
 
 export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
@@ -38,11 +37,11 @@ export async function fetcher<T>(url: string, init?: RequestInit): Promise<T> {
 					newResponse.refresh_expires_in
 				);
 				saveIdTokenInCookie(newResponse.id_token, newResponse.expires_in);
-
-				return await fetcher(url, { ...init, headers });
 			} catch {
-				redirectToLoginPage();
+				logout();
+				return Promise.reject('No refresh token');
 			}
+			return await fetcher(url, { ...init, headers });
 		}
 
 		if (!res.ok) {

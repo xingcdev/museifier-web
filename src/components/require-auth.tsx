@@ -1,12 +1,12 @@
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, type ReactNode } from 'react';
+import { logout } from '../api/auth';
 import { useRefreshAccessToken } from '../hooks/use-refresh-access-token';
 import { UseAuth } from '../hooks/useAuth';
 import type { JwtPayload } from '../types/oauth-types';
 import {
 	getAccessTokenInCookie,
 	getRefreshTokenInCookie,
-	redirectToLoginPage,
 	removeAccessTokenInCookie,
 	removeRefreshTokenInCookie,
 	saveAccessTokenInCookie,
@@ -41,7 +41,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 				setIsAuthenticated(true);
 			} catch {
 				removeAccessTokenInCookie();
-				redirectToLoginPage();
+				logout();
 			}
 		} else {
 			// The token doesn't exist or is expired
@@ -68,11 +68,11 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 					onError: () => {
 						// No refresh token found
 						removeRefreshTokenInCookie();
-						redirectToLoginPage();
+						logout();
 					},
 				});
 			} else {
-				redirectToLoginPage();
+				logout();
 			}
 		}
 	}, [refreshAccessToken, setIsAuthenticated, setUser]);

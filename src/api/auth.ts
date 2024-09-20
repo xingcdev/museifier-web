@@ -87,7 +87,8 @@ export async function logout() {
 	const response = await fetch(logoutUri + '?' + urlencoded.toString());
 
 	if (!response.ok) {
-		return Promise.reject('No id token found.');
+		// Logout needs 'Id token'. If it is not present, go to the login page.
+		redirectToLoginPage();
 	}
 
 	removeAccessTokenInCookie();
