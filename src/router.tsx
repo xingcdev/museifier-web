@@ -5,6 +5,7 @@ import Layout from './routes/layout';
 import { Museum } from './routes/museum';
 import { MuseumMap } from './routes/museum-map';
 import { MuseumsList } from './routes/museums-list';
+import { TermsPage } from './routes/terms-page';
 
 export const router = createBrowserRouter([
 	{
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
 			{
 				path: 'museums/:museumId',
 				element: <Museum />,
+			},
+			{
+				path: '/terms',
+				element: <TermsPage />,
 			},
 		],
 	},

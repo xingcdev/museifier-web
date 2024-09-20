@@ -11,6 +11,7 @@ import Link from '@mui/material/Link';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { getKcClsx } from 'keycloakify/login/lib/kcClsx';
 import type { PageProps } from 'keycloakify/login/pages/PageProps';
 import { clsx } from 'keycloakify/tools/clsx';
@@ -120,7 +121,7 @@ export default function Login(
 				</>
 			}
 		>
-			<div id="kc-form">
+			<Box id="kc-form" width={380}>
 				{realm.password && (
 					<Stack
 						component="form"
@@ -316,7 +317,27 @@ export default function Login(
 						</div>
 					</Stack>
 				)}
-			</div>
+			</Box>
+
+			<Box width={500} pt={15}>
+				<Typography
+					variant="h6"
+					component="p"
+					color="textSecondary"
+					gutterBottom
+				>
+					Muséifier, qu'est-ce que c'est ?
+				</Typography>
+				<Typography color="textSecondary" gutterBottom>
+					Muséifier est une application qui permet de découvrir facilement les
+					musées proches de chez vous et de noter vos visites.
+				</Typography>
+				<Typography color="textSecondary" gutterBottom>
+					Elle offre des fonctionnalités pour explorer les musées locaux et
+					gérer vos visites, que vous soyez passionné d'art, d'histoire ou de
+					sciences.
+				</Typography>
+			</Box>
 		</Template>
 	);
 }

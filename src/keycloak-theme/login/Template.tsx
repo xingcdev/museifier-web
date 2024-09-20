@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import LoginImg from '../../assets/le-louvre.jpg';
 import { AppLogo } from '../../components/app-logo';
 import { Copyright } from '../../components/ui/copyright';
+import { Socials } from '../../components/ui/socials';
 import type { I18n } from './i18n';
 import type { KcContext } from './KcContext';
 
@@ -101,9 +102,21 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 				position="relative"
 			>
 				<AppLogo sx={{ position: 'absolute', top: 10, left: 15 }} />
-				<Copyright sx={{ position: 'absolute', bottom: 10, left: 15 }} />
+				<Box
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						position: 'absolute',
+						bottom: 10,
+						left: 15,
+					}}
+				>
+					<Copyright sx={{ mr: 1 }} />
+					<Socials />
+				</Box>
+
 				<div className={kcClsx('kcLoginClass')}>
-					<Box width={380}>
+					<Box>
 						<header className={kcClsx('kcFormHeaderClass')}>
 							{/* {realm.internationalizationEnabled &&
 								(assert(locale !== undefined), locale.supported.length > 1) && (
@@ -219,8 +232,14 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 								return node;
 							})()}
 						</header>
-						<div id="kc-content">
-							<div id="kc-content-wrapper">
+						<Box id="kc-content">
+							<Box
+								id="kc-content-wrapper"
+								display="flex"
+								justifyContent="center"
+								alignItems="center"
+								flexDirection="column"
+							>
 								{/* App-initiated actions should not see warning messages about the need to complete the action during login. */}
 								{displayMessage &&
 									message !== undefined &&
@@ -297,8 +316,8 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 										</div>
 									</div>
 								)}
-							</div>
-						</div>
+							</Box>
+						</Box>
 					</Box>
 				</div>
 			</Box>
