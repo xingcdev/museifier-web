@@ -37,11 +37,12 @@ export const MuseumAutocomplete = forwardRef(
 			size: 10,
 			q: debouncedSearchTerm,
 		};
+		const [open, setOpen] = useState(false);
 
 		const { data, isPending } = useQuery({
 			queryFn: () => getMuseums(getMuseumsParams),
 			queryKey: ['museums', getMuseumsParams],
-			enabled: debouncedSearchTerm.length >= 3,
+			enabled: open,
 			select: (data) =>
 				data?.data.map((museum) => ({
 					id: museum.id,
@@ -55,6 +56,9 @@ export const MuseumAutocomplete = forwardRef(
 				ref={ref}
 				id="museum-autocomplete"
 				inputValue={searchTerm}
+				open={open}
+				onOpen={() => setOpen(true)}
+				onClose={() => setOpen(false)}
 				onInputChange={(_, newValue) => setSearchTerm(newValue)}
 				options={data || []}
 				loading={searchTerm.length > 3 && isPending}
