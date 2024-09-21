@@ -83,9 +83,11 @@ export function MuseumMap() {
 	//  ====== 1. Initialization of auto complete ======
 	// Logic: <Autocomplete /> changes the 'q' search param --> perform the geocoding--> update 'location' search param --> perform nearby museums request
 
+	// Fill the initial autocomplete value
 	useQuery({
 		queryKey: ['init-address-autocompletion'],
 		queryFn: async () => {
+			if (!addressParam) return;
 			const data = await getAddressAutocompletion(addressParam, 1);
 			if (data) {
 				const firstAddress = data.features[0].properties.label;
