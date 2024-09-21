@@ -15,7 +15,7 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query';
 import { useEffect, useMemo, useState, type FormEventHandler } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import {
 	getVisitedMuseums,
 	type GetVisitedMuseumsParams,
@@ -276,11 +276,12 @@ export function MuseumsList() {
 							}}
 						>
 							{data.data.map((museum) => (
-								<Box
+								<RouterLink
+									preventScrollReset={true}
 									key={museum.id}
-									onClick={() => setSelectedMuseumId2(museum.id)}
-									sx={{
-										cursor: 'pointer',
+									to={`?id=${museum.id}`}
+									style={{
+										textDecoration: 'none',
 									}}
 								>
 									<MuseumCard
@@ -300,7 +301,7 @@ export function MuseumsList() {
 													: undefined,
 										}}
 									/>
-								</Box>
+								</RouterLink>
 							))}
 						</Stack>
 						<Box display="flex" justifyContent="center" py={2}>
