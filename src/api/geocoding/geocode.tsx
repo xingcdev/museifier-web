@@ -12,9 +12,8 @@ export async function geocode(query: string) {
 				import.meta.env.VITE_GEOCODING_API_URL
 			}/search?${searchParams.toString()}`,
 			{
-				headers: {
-					'Content-Type': 'application/json',
-				},
+				// Do not send token cookies
+				credentials: 'omit',
 			}
 		);
 
