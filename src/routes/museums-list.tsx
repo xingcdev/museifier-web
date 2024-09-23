@@ -15,7 +15,7 @@ import {
 	useQueryClient,
 } from '@tanstack/react-query';
 import { useEffect, useMemo, useState, type FormEventHandler } from 'react';
-import { Link as RouterLink, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
 	getVisitedMuseums,
 	type GetVisitedMuseumsParams,
@@ -48,7 +48,7 @@ export function MuseumsList() {
 	const pageParam = searchParams.get('page');
 	const page = pageParam ? parseInt(pageParam) : 1;
 	const sizeParam = searchParams.get('size');
-	const size = sizeParam ? parseInt(sizeParam) : 15;
+	const size = sizeParam ? 2 : 2;
 	const searchQueryParam = searchParams.get('q');
 	const cityParam = searchParams.get('city');
 	const postalCodeParam = searchParams.get('postalCode');
@@ -81,7 +81,7 @@ export function MuseumsList() {
 				if (!selectedMuseumId) {
 					setSelectedMuseumId2(data.data[0].id);
 					// Select the first museum when filtering
-				} else if (isFiltering || isSorting || searchQueryParam) {
+				} else if (isFiltering || isSorting || searchQueryParam || pageParam) {
 					setSelectedMuseumId2(data.data[0].id);
 				}
 			} else {
@@ -276,12 +276,14 @@ export function MuseumsList() {
 							}}
 						>
 							{data.data.map((museum) => (
-								<RouterLink
-									preventScrollReset={true}
+								<Box
 									key={museum.id}
-									to={`?id=${museum.id}`}
-									style={{
-										textDecoration: 'none',
+									onClick={() => {
+										searchParams.set('id', museum.id);
+										setSearchParams(searchParams, { preventScrollReset: true });
+									}}
+									sx={{
+										cursor: 'pointer',
 									}}
 								>
 									<MuseumCard
@@ -301,7 +303,7 @@ export function MuseumsList() {
 													: undefined,
 										}}
 									/>
-								</RouterLink>
+								</Box>
 							))}
 						</Stack>
 						<Box display="flex" justifyContent="center" py={2}>
