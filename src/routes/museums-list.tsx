@@ -48,7 +48,7 @@ export function MuseumsList() {
 	const pageParam = searchParams.get('page');
 	const page = pageParam ? parseInt(pageParam) : 1;
 	const sizeParam = searchParams.get('size');
-	const size = sizeParam ? 2 : 2;
+	const size = sizeParam ? parseInt(sizeParam) : 15;
 	const searchQueryParam = searchParams.get('q');
 	const cityParam = searchParams.get('city');
 	const postalCodeParam = searchParams.get('postalCode');
